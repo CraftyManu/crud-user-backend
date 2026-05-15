@@ -1,3 +1,12 @@
-PORT=7000
-/* MONGO_URI=mongodb+srv://backcrud:pGE9cOi12XyP89TL@experimental-cluster-01.jts0ysz.mongodb.net/?appName=experimental-cluster-01
- */
+import dotenv from 'dotenv'
+
+dotenv.config() //carga internamente una funcion porpia de dotenv
+
+console.log('✅ Variables de entorno cargadas')
+console.log(process.env.MONGO_URI)
+console.log(process.env.PORT)
+
+export const env = {
+    PORT: process.env.PORT,
+    MONGO_URI: process.env.MONGO_URI
+}

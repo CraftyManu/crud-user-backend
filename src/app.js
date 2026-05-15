@@ -3,11 +3,10 @@ import './config/env.js'
 import connectDB from './config/db.js'
 import userRoutes from './routes/user.routes.js'
 
-const app = express() //levanta el backend como funcion
+const app = express() //levanta el backend como función
 app.use(express.json()) //para poder usar json desde el body
-//llamar a la base de datos
 
-connectDB()
+connectDB() //llamar a la base de datos
 
 //llamar a las rutas
 app.use(userRoutes) //ruta de usuarios

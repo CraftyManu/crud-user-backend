@@ -1,4 +1,9 @@
 import {
+    createUserSchema,
+    updateUserSchema
+} from '../dto/user.dto.js'
+
+import {
     getUsersService,
     createUserService,
     updateUserService,
@@ -7,40 +12,64 @@ import {
 
 const getUsers = async (req, res) => {
     try {
-        console.log ('CONTROLLER → getUsers')
+        console.log('🎮 CONTROLLER → getUsers')
         const users = await getUsersService()
         res.json(users)
     } catch (error) {
-        res.status(500).json({error: error.message})
+        res.status(500).json({ error: error.message })
     }
 }
 
 const createUser = async (req, res) => {
     try {
-        console.log('CONTROLLER → createUser')
-        const user = await createUserService(req.body)
-        res.json(user)
+        console.log('🎮 CONTROLLER → createUser')
+
+        //Validar DTO
+        const { error } = createUserSchema.validate(req.body) //compara con el archivo dto, es un proceso rápido
+        if (error) {
+            return res.status(400).json({
+                error: error.details[0].message
+            })
+        }
+
+        const user = await createUserService(req.body) //es un proceso más lento, tiene que verificar contra el modelo, tiene que sacar la contraseña y encriptarla, guarda nuevo objeto con contraseña encriptada, puede verificar si el mail ya existe y luego guarda en la database...
+        res.status(201).json(user)
+
     } catch (error) {
-        res.status(500).json({error: error.message})
+        res.status(500).json({ error: error.message })
     }
 }
+
 const updateUser = async (req, res) => {
     try {
-        console.log('CONTROLLER → updateUser')
-        const user = await updateUserService(req.body)
+        console.log('🎮 CONTROLLER → updateUser')
+        //Validar DTO
+        const { error } = updateUserSchema.validate(req.body)
+        if (error) {
+            return res.status(400).json({
+                error: error.details[0].message
+            })
+        }
+
+        const user = await updateUserService(
+            req.params.id,
+            req.body
+        )
         res.json(user)
+        console.log('user: ')
+        console.log(user)
     } catch (error) {
-        res.status(500).json({error: error.message})
+        res.status(500).json({ error: error.message })
     }
 }
 
 const deleteUser = async (req, res) => {
     try {
-        console.log('CONTROLLER → deleteUser')
+        console.log('🎮 CONTROLLER → deleteUser')
         const result = await deleteUserService(req.params.id)
         res.json(result)
     } catch (error) {
-        res.status(500).json({error: error.message})
+        res.status(500).json({ error: error.message })
     }
 }
 

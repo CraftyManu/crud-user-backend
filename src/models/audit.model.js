@@ -1,0 +1,1 @@
+// para guardar los datos de los usuarios eliminados

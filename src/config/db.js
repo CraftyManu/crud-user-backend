@@ -4,7 +4,7 @@ import { env } from './env.js' //importa solo la funcion dentro de { }
 const connectDB = async () => {
     try {
         console.log('🔄 Conectando MongoDB...')
-        await mongoose.connect(env.MONGO_URI) //levanta la varialbe de env
+        await mongoose.connect(env.MONGO_URI) //levanta la variable desde env
         console.log('✔ Mongo conectado')
     } catch (error) {
         console.error('❌ Error conectando MongoDB:')

@@ -1,0 +1,44 @@
+import { required } from "joi";
+import mongoose from "mongoose";
+
+const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
+    nombre: {
+        type: String,
+        required: true
+    },
+    apellido: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    edad: {
+        type: number,
+        required: true
+    },
+    sexo: {
+        type: String,
+        required: true
+    },
+    telefono: {
+        type: String,
+        required: true
+    },
+    direccion: {
+        type: String,
+        required: true
+    }
+}, {
+    timestamps: true //hora utc0 (-3 para nuestro uso horario)
+})
+
+const User = mongoose.model('User', userSchema)
+
+export default User

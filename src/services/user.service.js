@@ -1,9 +1,14 @@
-// esta es la última capa → no tiene ningun import
+// esta es la última capa?
+import bcrypt from "bcryptjs"
+import User from '../models/user.model.js'
+import Audit from '../models/audit.model.js'
+//models va a llamar a la database, por eso no necesito importarla en este archivo
+
 const getUsersService = async () => {
     try {
         console.log('SERVICE → getUsersService')
         console.log('---')
-        return []
+        return [] 
     } catch (error) {
         throw error
     }

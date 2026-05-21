@@ -23,10 +23,10 @@ const getUsers = async (req, res) => {
 const createUser = async (req, res) => {
     try {
         console.log('🎮 CONTROLLER → createUser')
-
         //Validar DTO
         const { error } = createUserSchema.validate(req.body) //compara con el archivo dto, es un proceso rápido
         if (error) {
+            console.log("there's an error in the data sent to createUserSchema")
             return res.status(400).json({
                 error: error.details[0].message
             })

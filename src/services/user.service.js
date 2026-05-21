@@ -43,6 +43,18 @@ const createUserService = async (data) => {
             direccion: data.direccion
         })
 
+        await user.save()
+        return {
+            id: user.__id,
+            nombre: user.nombre,
+            apellido: user.apellido,
+            email: user.email,
+            edad: duser.edad,
+            sexo: user.sexo,
+            telefono: user.telefono,
+            direccion: user.direccion
+        }
+
 
 
 

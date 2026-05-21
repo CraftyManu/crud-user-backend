@@ -1,4 +1,4 @@
-import { required } from "joi";
+/* import { required } from "joi"; */
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
         required: true
     },
     edad: {
-        type: number,
+        type: Number,
         required: true
     },
     sexo: {

@@ -7,8 +7,9 @@ import Audit from '../models/audit.model.js'
 const getUsersService = async () => {
     try {
         console.log('SERVICE → getUsersService')
+        const users = await User.find().select('-password') //no tiene que devolver el password!
         console.log('---')
-        return [] 
+        return users
     } catch (error) {
         throw error
     }
@@ -18,6 +19,34 @@ const createUserService = async (data) => {
     try {
         console.log('SERVICE → createUserService')
         console.log(data)
+        const existUser = await User.findOne({
+            email: data.email
+        })
+
+        if (existUser) {
+            throw new Error("El usuario ya existe");
+        }
+
+        const hashedPassword = await bcrypt.hash(
+            data.password,
+            10
+        )
+
+        const user = new user ({
+            nombre: data.nombre,
+            apellido: data.apellido,
+            email: data.email,
+            password: hashedPassword,
+            edad: data.edad,
+            sexo: data.sexo,
+            telefono: data.telefono,
+            direccion: data.direccion
+        })
+
+
+
+
+
         console.log('---')
         return data
     } catch (error) {

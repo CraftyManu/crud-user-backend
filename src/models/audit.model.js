@@ -1,8 +1,7 @@
 // para guardar los datos de los usuarios eliminados
-import { required } from "joi";
 import mongoose from "mongoose";
 
-const auditSchema = new mongoose.Schema({
+const auditSchema = new mongoose.Schema({  //la primera vez que se usa mongoDB crea la base de datos 'audit'?
     usuarioEliminado: {
         type: Object,
         required: true

@@ -32,7 +32,7 @@ const createUserService = async (data) => {
             10
         )
 
-        const user = new user ({
+        const user = new User ({
             nombre: data.nombre,
             apellido: data.apellido,
             email: data.email,
@@ -49,7 +49,7 @@ const createUserService = async (data) => {
             nombre: user.nombre,
             apellido: user.apellido,
             email: user.email,
-            edad: duser.edad,
+            edad: user.edad,
             sexo: user.sexo,
             telefono: user.telefono,
             direccion: user.direccion

@@ -22,12 +22,20 @@ const createUserService = async (data) => {
     try {
         console.log('SERVICE → createUserService')
         console.log(data)
-        const existUser = await User.findOne({
+        const existUserEmail = await User.findOne({
             email: data.email
         })
 
-        if (existUser) {
+        if (existUserEmail) {
             throw new Error("El usuario ya existe");
+        }
+
+        const existUserName = await User.findOne({
+            userName: data.userName
+        })
+
+        if (existUserName) {
+            throw new Error("El nombre de usuario ya existe");
         }
 
         const hashedPassword = await bcrypt.hash(
@@ -93,6 +101,14 @@ const updateUserService = async (id, data) => {
         if (data.email) {
             throw new Error('El email no puede modificarse')
         }
+        const existUserName = await User.findOne({
+            userName: data.userName
+        })
+
+        if (existUserName) {
+            throw new Error("El nombre de usuario ya existe");
+        }
+        
         //Update parcial
         if (data.nombre) user.nombre = data.nombre
         if (data.apellido) user.apellido = data.apellido

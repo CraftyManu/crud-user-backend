@@ -1,5 +1,19 @@
 import Joi from 'joi'
 
+// 1. Define the external check function
+const checkUniqueUsername = async (value) => {
+    // Replace this with your actual database lookup logic
+    const userExists = await User.findOne({
+                userName: value
+            })
+
+    if (userExists) {
+        throw new Error('Username is already taken');
+    }
+    
+    return value; // Return the value if validation passes
+};
+
 const createUserSchema = Joi.object({
     nombre: Joi.string().required(),
     apellido: Joi.string().required(),
@@ -34,4 +48,17 @@ const updateUserSchema = Joi.object({
 export {
     createUserSchema,
     updateUserSchema
+}
+
+
+
+
+// 3. Run the validation asynchronously
+async function validateUser(userData) {
+    try {
+        const validatedData = await userSchema.validateAsync(userData);
+        console.log("Validation successful:", validatedData);
+    } catch (error) {
+        console.error("Validation failed:", error.message);
+    }
 }

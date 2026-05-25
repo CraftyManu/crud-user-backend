@@ -1,15 +1,18 @@
 // esta es la última capa?
 import bcrypt from "bcryptjs"
 import User from '../models/user.model.js'
-import Audit from '../models/audit.model.js'
-//models va a llamar a la database, por eso no necesito importarla en este archivo
+import Audit from '../models/audit.model.js' //models va a llamar a la database, por eso no necesito importarla en este archivo
+import calculateAge from "../dao/functions/dao.users.js"
 
 const getUsersService = async () => {
     try {
         console.log('SERVICE → getUsersService')
         const users = await User.find().select('-password') //no tiene que devolver el password!
+        const usersWithAge = await calculateAge(users)
+        console.log("🚀 ~ getUsersService ~ calculateAge:")
+        console.log(usersWithAge)
         console.log('---')
-        return users
+        return usersWithAge
     } catch (error) {
         throw error
     }
@@ -37,25 +40,38 @@ const createUserService = async (data) => {
             apellido: data.apellido,
             email: data.email,
             password: hashedPassword,
-            edad: data.edad,
+            fechaNacimiento: data.fechaNacimiento,
             sexo: data.sexo,
             telefono: data.telefono,
-            direccion: data.direccion
+            direccion: data.direccion,
+            userName: data.userName,
+            pais: data.pais,
+            provincia: data.provincia,
+            localidad: data.localidad,
+            CP: data.CP
         })
 
         await user.save()
-        return {
+
+        const savedUser = {
             id: user._id,
             nombre: user.nombre,
             apellido: user.apellido,
             email: user.email,
-            edad: user.edad,
+            fechaNacimiento: user.fechaNacimiento,
             sexo: user.sexo,
             telefono: user.telefono,
-            direccion: user.direccion
+            direccion: user.direccion,
+            userName: user.userName,
+            pais: user.pais,
+            provincia: user.provincia,
+            localidad: user.localidad,
+            CP: user.CP
         }
-        console.log('---')
-        return data
+
+        const [savedUserWithAge] = await calculateAge([savedUser])
+        console.log("🚀 ~ createUserService ~ savedUserWithAge:", savedUserWithAge)
+        return savedUserWithAge
     } catch (error) {
         throw error
     }
@@ -64,7 +80,8 @@ const createUserService = async (data) => {
 const updateUserService = async (id, data) => {
     try {
         console.log('SERVICE → updateUserService')
-        console.log(id)
+        console.log(`usuario modificado 👤: ${id}`)
+        console.log(`datos modificados:`)
         console.log(data)
         const user = await User.findById(id)
 
@@ -79,10 +96,15 @@ const updateUserService = async (id, data) => {
         //Update parcial
         if (data.nombre) user.nombre = data.nombre
         if (data.apellido) user.apellido = data.apellido
-        if (data.edad) user.edad = data.edad
+        if (data.fechaNacimiento) user.fechaNacimiento = data.fechaNacimiento
         if (data.sexo) user.sexo = data.sexo
         if (data.telefono) user.telefono = data.telefono
         if (data.direccion) user.direccion = data.direccion
+        if (data.userName) user.userName = data.userName
+        if (data.pais) user.pais = data.pais
+        if (data.provincia) user.provincia = data.provincia
+        if (data.localidad) user.localidad = data.localidad
+        if (data.CP) user.CP = data.CP
 
         //Cambiar password si viene
         if (data.password) {
@@ -94,17 +116,24 @@ const updateUserService = async (id, data) => {
 
         await user.save()
 
-        return {
+        const updatedUser = {
             id: user._id,
             nombre: user.nombre,
             apellido: user.apellido,
             email: user.email,
-            edad: user.edad,
+            fechaNacimiento: user.fechaNacimiento,
             sexo: user.sexo,
             telefono: user.telefono,
-            direccion: user.direccion
+            direccion: user.direccion,
+            userName: user.userName,
+            pais: user.pais,
+            provincia: user.provincia,
+            localidad: user.localidad,
+            CP: user.CP
         }
-        console.log('---')
+
+        const [updatedUserWithAge] = await calculateAge([updatedUser])
+        return updatedUserWithAge
     } catch (error) {
         throw error
     }

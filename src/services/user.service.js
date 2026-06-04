@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs"
 import User from '../models/user.model.js'
 import Audit from '../models/audit.model.js' //models va a llamar a la database, por eso no necesito importarla en este archivo
 import calculateAge from "../dao/functions/dao.users.js"
+import mongoose from "mongoose" //to validate id
+
 
 const getUsersService = async () => {
     try {
@@ -30,11 +32,11 @@ const createUserService = async (data) => {
             throw new Error("El usuario ya existe");
         }
 
-        const existUserName = await User.findOne({
+        const UserNameExists = await User.findOne({
             userName: data.userName
         })
 
-        if (existUserName) {
+        if (UserNameExists) {
             throw new Error("El nombre de usuario ya existe");
         }
 
@@ -84,31 +86,37 @@ const createUserService = async (data) => {
         throw error
     }
 }
+/** const updateUserService = async (id, data):
++  * Updates a user's information by their ID.
++  * @param {string} id - The ID of the user to update.
++  * @param {Object} data - The fields to update for the user.
++  * @returns {Promise<Object>} The updated user object with calculated age.
++  * @throws {Error} If the user is not found or if validation fails.
++  */
 
 const updateUserService = async (id, data) => {
     try {
         console.log('SERVICE → updateUserService')
-        console.log(`usuario modificado 👤: ${id}`)
-        console.log(`datos modificados:`)
+        console.log(`👤 usuario a modificadar: ${id}`)
         console.log(data)
-        const user = await User.findById(id)
-
-        if (!user) {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error('Usuario no encontrado')
         }
+
+        const user = await User.findById(id) // ← Returns null if invalid/not found
 
         //NO permitir cambiar email
         if (data.email) {
             throw new Error('El email no puede modificarse')
         }
-        const existUserName = await User.findOne({
+        const UserNameExists = await User.findOne({
             userName: data.userName
         })
 
-        if (existUserName) {
+        if (UserNameExists) {
             throw new Error("El nombre de usuario ya existe");
         }
-        
+
         //Update parcial
         if (data.nombre) user.nombre = data.nombre
         if (data.apellido) user.apellido = data.apellido
@@ -159,10 +167,11 @@ const deleteUserService = async (id) => {
     try {
         console.log('SERVICE → deleteUserService')
         console.log(id)
-        const user = await User.findById(id)
-        if (!user) {
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error('Usuario no encontrado')
         }
+        const user = await User.findById(id)
 
         //AUDITORIA
         await Audit.create({

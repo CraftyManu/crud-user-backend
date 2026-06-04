@@ -1,18 +1,19 @@
 import Joi from 'joi'
 
-// 1. Define the external check function
-const checkUniqueUsername = async (value) => {
-    // Replace this with your actual database lookup logic
+/* const checkUniqueUsername = async (value) => {
+    console.log("🚀 ~ checkUniqueUsername user.dto.js")
+
     const userExists = await User.findOne({
-                userName: value
-            })
+        userName: value
+    })
 
     if (userExists) {
-        throw new Error('Username is already taken');
+        throw new Error('Ese "Nombre de Usuario" ya existe');
     }
-    
+
     return value; // Return the value if validation passes
-};
+}; */
+
 
 const createUserSchema = Joi.object({
     nombre: Joi.string().required(),
@@ -34,7 +35,7 @@ const updateUserSchema = Joi.object({
     nombre: Joi.string(),
     apellido: Joi.string(),
     password: Joi.string().min(6),
-    fechaNacimiento: Joi.date().iso('Date must be in YYYY-MM-DD format '),
+    fechaNacimiento: Joi.date().iso('Date must be in YYYY-MM-DD format'),
     sexo: Joi.string(),
     telefono: Joi.string(), //+59, al empezar con el signo más deja de ser un número.
     direccion: Joi.string(),
@@ -45,15 +46,20 @@ const updateUserSchema = Joi.object({
     CP: Joi.number(),
 })
 
+const userParamsSchema = Joi.object({
+    id: Joi.string().hex().length(24).required()
+});
+
 export {
     createUserSchema,
-    updateUserSchema
+    updateUserSchema,
+    userParamsSchema
 }
 
 
 
 
-// 3. Run the validation asynchronously
+/* // 3. Run the validation asynchronously
 async function validateUser(userData) {
     try {
         const validatedData = await userSchema.validateAsync(userData);
@@ -61,4 +67,4 @@ async function validateUser(userData) {
     } catch (error) {
         console.error("Validation failed:", error.message);
     }
-}
+} */

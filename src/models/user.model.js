@@ -53,12 +53,11 @@ const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
     codigoPostal: {
         type: String,
         required: true
-    }/* ,
+    },
     userName: {
         type: String,
         required: true
-    } */
-
+    } 
 }, {
     timestamps: true //hora utc0 (-3 para nuestro uso horario)
 })

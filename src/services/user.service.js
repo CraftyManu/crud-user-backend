@@ -53,14 +53,14 @@ const createUserService = async (data) => {
             email: data.email,
             password: hashedPassword,
             fechaNacimiento: data.fechaNacimiento,
-            sexo: data.sexo,
+            genero: data.genero,
             telefono: data.telefono,
             direccion: data.direccion,
             userName: data.userName,
             pais: data.pais,
             provincia: data.provincia,
             localidad: data.localidad,
-            CP: data.CP
+            codigoPostal: data.codigoPostal
         })
 
         await user.save()
@@ -71,14 +71,14 @@ const createUserService = async (data) => {
             apellido: user.apellido,
             email: user.email,
             fechaNacimiento: user.fechaNacimiento,
-            sexo: user.sexo,
+            genero: user.genero,
             telefono: user.telefono,
             direccion: user.direccion,
             userName: user.userName,
             pais: user.pais,
             provincia: user.provincia,
             localidad: user.localidad,
-            CP: user.CP
+            codigoPostal: user.codigoPostal
         }
 
         const [savedUserWithAge] = await calculateAge([savedUser])
@@ -121,19 +121,19 @@ const updateUserService = async (id, data) => {
         }
 
         //const allowedFields = 
-        // ["nombre", "apellido", "fechaNacimiento", "genero", "telefono", "direccion", "userName", "pais", "provincia", "localidad", "CP"]
+        // ["nombre", "apellido", "fechaNacimiento", "genero", "telefono", "direccion", "userName", "pais", "provincia", "localidad", "codigoPostal"]
         //Update parcial
         if (data.nombre) user.nombre = data.nombre
         if (data.apellido) user.apellido = data.apellido
         if (data.fechaNacimiento) user.fechaNacimiento = data.fechaNacimiento
-        if (data.sexo) user.sexo = data.sexo
+        if (data.genero) user.genero = data.genero
         if (data.telefono) user.telefono = data.telefono
         if (data.direccion) user.direccion = data.direccion
         if (data.userName) user.userName = data.userName
         if (data.pais) user.pais = data.pais
         if (data.provincia) user.provincia = data.provincia
         if (data.localidad) user.localidad = data.localidad
-        if (data.CP) user.CP = data.CP
+        if (data.codigoPostal) user.codigoPostal = data.codigoPostal
 
         //Cambiar password si viene
         if (data.password) {
@@ -151,14 +151,14 @@ const updateUserService = async (id, data) => {
             apellido: user.apellido,
             email: user.email,
             fechaNacimiento: user.fechaNacimiento,
-            sexo: user.sexo,
+            genero: user.genero,
             telefono: user.telefono,
             direccion: user.direccion,
             userName: user.userName,
             pais: user.pais,
             provincia: user.provincia,
             localidad: user.localidad,
-            CP: user.CP
+            codigoPostal: user.codigoPostal
         }
 
         const [updatedUserWithAge] = await calculateAge([updatedUser])

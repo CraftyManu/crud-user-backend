@@ -1,5 +1,5 @@
 //Estandariza el formato de respuestas exitosas y de error
-//Evita repetir res.status().json() en todos los controller
+//Evita repetir res.status().json() en todos los controllers
 
 export const successResponse = (
     res, 

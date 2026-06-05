@@ -22,7 +22,11 @@ const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
         type: Date,
         required: true,
     },
-    sexo: {
+    edad: {
+        type: Number /* ,
+        required: true */
+    },
+    genero: {
         type: String,
         required: true
     },
@@ -34,11 +38,7 @@ const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
         type: String,
         required: true
     },
-    userName: {
-        type: String,
-        required: true
-    },
-    pais: {
+    localidad: {
         type: String,
         required: true
     },
@@ -46,18 +46,18 @@ const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
         type: String,
         required: true
     },
-    localidad: {
+    pais: {
         type: String,
         required: true
     },
-    CP: {
-        type: Number,
+    codigoPostal: {
+        type: String,
         required: true
-    },
-    edad: {
-        type: Number
-    }
-
+    }/* ,
+    userName: {
+        type: String,
+        required: true
+    } */
 
 }, {
     timestamps: true //hora utc0 (-3 para nuestro uso horario)

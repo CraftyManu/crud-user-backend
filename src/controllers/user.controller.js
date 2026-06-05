@@ -2,14 +2,14 @@ import {
     createUserSchema,
     updateUserSchema,
     userParamsSchema
-} from '../dto/user.dto.js'
+} from "../dto/user.dto.js"
 
 import {
     getUsersService,
     createUserService,
     updateUserService,
     deleteUserService
-} from '../services/user.service.js'
+} from "../services/user.service.js"
 
 const getUsers = async (req, res) => {
     try {

@@ -4,7 +4,8 @@ import User from '../models/user.model.js'
 import Audit from '../models/audit.model.js' //models va a llamar a la database, por eso no necesito importarla en este archivo
 import calculateAge from "../dao/functions/dao.users.js"
 import mongoose from "mongoose" //to validate id
-
+/* import { checkUniqueUsername } from "../dto/user.dto.js"
+ */
 
 const getUsersService = async () => {
     try {
@@ -32,6 +33,7 @@ const createUserService = async (data) => {
             throw new Error("El usuario ya existe");
         }
 
+        /*         checkUniqueUsername(data.userName) */
         const UserNameExists = await User.findOne({
             userName: data.userName
         })
@@ -109,6 +111,7 @@ const updateUserService = async (id, data) => {
         if (data.email) {
             throw new Error('El email no puede modificarse')
         }
+        /*      checkUniqueUsername(data.userName) */
         const UserNameExists = await User.findOne({
             userName: data.userName
         })
@@ -117,6 +120,8 @@ const updateUserService = async (id, data) => {
             throw new Error("El nombre de usuario ya existe");
         }
 
+        //const allowedFields = 
+        // ["nombre", "apellido", "fechaNacimiento", "genero", "telefono", "direccion", "userName", "pais", "provincia", "localidad", "CP"]
         //Update parcial
         if (data.nombre) user.nombre = data.nombre
         if (data.apellido) user.apellido = data.apellido

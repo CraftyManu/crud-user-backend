@@ -2,44 +2,85 @@
 import bcrypt from "bcryptjs"
 import User from '../models/user.model.js'
 import Audit from '../models/audit.model.js' //models va a llamar a la database, por eso no necesito importarla en este archivo
-import calculateAge from "../dao/functions/dao.users.js"
 import mongoose from "mongoose" //to validate id
-/* import { checkUniqueUsername } from "../dto/user.dto.js"
- */
+/* import { checkUniqueUsername } from "../dto/user.dto.js" */
+import calculateAge from "../dao/functions/dao.users.js"
 
-const getUsersService = async () => {
+const getUsersService = async ({ email, id }) => {
     try {
         console.log('SERVICE → getUsersService')
-        const users = await User.find().select('-password') //no tiene que devolver el password!
-        const usersWithAge = await calculateAge(users)
-        console.log("🚀 ~ getUsersService ~ calculateAge:")
-        console.log(usersWithAge)
-        console.log('---')
-        return usersWithAge
+        // buscar por ID
+        if (id) {
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                throw {
+                    statusCode: 400,
+                    message: "Id inválido"
+                };
+            }
+
+            const user = await User.findById(id).select('-password') //no tiene que devolver el password!
+            /* const users = await User.find().select('-password')*/ //no tiene que devolver el password!
+
+            if (!user) {
+                throw {
+                    statusCode: 404,
+                    message: "Usuario no encontrado"
+                }
+            }
+
+            /* return user; */
+            console.log("🚀 ~ getUsersService ~ calculateAge:")
+            const usersWithAge = await calculateAge(user);
+            return usersWithAge;
+        }
+
+        //Buscar por email
+
+        if (email) {
+            const user = await User.findOne({ email }).select("-password");
+
+            if (!user) {
+                throw {
+                    statusCode: 404,
+                    message: "Usuario no encontrado"
+                }
+            }
+
+            /* return user */
+            const usersWithAge = await calculateAge(user)
+            console.log("🚀 ~ getUsersService ~ calculateAge:")
+            return usersWithAge
+        }
+        //Todos los usuarios
+        return await (await User.find().select("-password")).sort({ nombre: 1 });
+
+
     } catch (error) {
-        throw error
-    }
+        throw {
+            statusCode: error.statusCode || 500,
+            message: error.message || "Error interno del servidor",
+            errors: error.errors || null,
+        };
+    };
+    /* console.log("🚀 ~ getUsersService ~ calculateAge:")
+console.log(usersWithAge) */
+    console.log('---')
+    /* return usersWithAge */
 }
 
 const createUserService = async (data) => {
+    console.log('SERVICE → createUserService')
+
     try {
-        console.log('SERVICE → createUserService')
-        console.log(data)
-        const existUserEmail = await User.findOne({
-            email: data.email
+        const existUser = await User.findOne({
+            email: data.email,
         })
 
-        if (existUserEmail) {
-            throw new Error("El usuario ya existe");
-        }
-
-        /*         checkUniqueUsername(data.userName) */
-        const UserNameExists = await User.findOne({
-            userName: data.userName
-        })
-
-        if (UserNameExists) {
-            throw new Error("El nombre de usuario ya existe");
+        if (existUser) {
+            throw {
+                statusCode: 400,
+                message: "El usuario ya existe",
+            };
         }
 
         const hashedPassword = await bcrypt.hash(
@@ -53,118 +94,142 @@ const createUserService = async (data) => {
             email: data.email,
             password: hashedPassword,
             fechaNacimiento: data.fechaNacimiento,
+            edad: data.edad,
             genero: data.genero,
             telefono: data.telefono,
             direccion: data.direccion,
-            userName: data.userName,
-            pais: data.pais,
-            provincia: data.provincia,
             localidad: data.localidad,
-            codigoPostal: data.codigoPostal
-        })
-
-        await user.save()
-
-        const savedUser = {
-            id: user._id,
-            nombre: user.nombre,
-            apellido: user.apellido,
-            email: user.email,
-            fechaNacimiento: user.fechaNacimiento,
-            genero: user.genero,
-            telefono: user.telefono,
-            direccion: user.direccion,
-            userName: user.userName,
-            pais: user.pais,
-            provincia: user.provincia,
-            localidad: user.localidad,
-            codigoPostal: user.codigoPostal
-        }
-
-        const [savedUserWithAge] = await calculateAge([savedUser])
-        console.log("🚀 ~ createUserService ~ savedUserWithAge:", savedUserWithAge)
-        return savedUserWithAge
-    } catch (error) {
-        throw error
-    }
-}
-/** const updateUserService = async (id, data):
-+  * Updates a user's information by their ID.
-+  * @param {string} id - The ID of the user to update.
-+  * @param {Object} data - The fields to update for the user.
-+  * @returns {Promise<Object>} The updated user object with calculated age.
-+  * @throws {Error} If the user is not found or if validation fails.
-+  */
-
-const updateUserService = async (id, data) => {
-    try {
-        console.log('SERVICE → updateUserService')
-        console.log(`👤 usuario a modificadar: ${id}`)
-        console.log(data)
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new Error('Usuario no encontrado')
-        }
-
-        const user = await User.findById(id) // ← Returns null if invalid/not found
-
-        //NO permitir cambiar email
-        if (data.email) {
-            throw new Error('El email no puede modificarse')
-        }
-        /*      checkUniqueUsername(data.userName) */
-        const UserNameExists = await User.findOne({
+            provincia: data.provincia,
+            pais: data.pais,
+            codigoPostal: data.codigoPostal,
             userName: data.userName
         })
 
-        if (UserNameExists) {
-            throw new Error("El nombre de usuario ya existe");
-        }
-
-        //const allowedFields = 
-        // ["nombre", "apellido", "fechaNacimiento", "genero", "telefono", "direccion", "userName", "pais", "provincia", "localidad", "codigoPostal"]
-        //Update parcial
-        if (data.nombre) user.nombre = data.nombre
-        if (data.apellido) user.apellido = data.apellido
-        if (data.fechaNacimiento) user.fechaNacimiento = data.fechaNacimiento
-        if (data.genero) user.genero = data.genero
-        if (data.telefono) user.telefono = data.telefono
-        if (data.direccion) user.direccion = data.direccion
-        if (data.userName) user.userName = data.userName
-        if (data.pais) user.pais = data.pais
-        if (data.provincia) user.provincia = data.provincia
-        if (data.localidad) user.localidad = data.localidad
-        if (data.codigoPostal) user.codigoPostal = data.codigoPostal
-
-        //Cambiar password si viene
-        if (data.password) {
-            user.password = await bcrypt.hash(
-                data.password,
-                10
-            )
-        }
-
         await user.save()
 
-        const updatedUser = {
+        return {
             id: user._id,
             nombre: user.nombre,
             apellido: user.apellido,
             email: user.email,
             fechaNacimiento: user.fechaNacimiento,
+            edad: user.edad,
             genero: user.genero,
             telefono: user.telefono,
             direccion: user.direccion,
-            userName: user.userName,
-            pais: user.pais,
-            provincia: user.provincia,
             localidad: user.localidad,
-            codigoPostal: user.codigoPostal
+            provincia: user.provincia,
+            pais: user.pais,
+            codigoPostal: user.codigoPostal,
+            userName: user.userName
+        }; // desgloso el objeto para asegurarme de que no se envía la contraseña
+
+        /* const [savedUserWithAge] = await calculateAge({user});
+        console.log("🚀 ~ createUserService ~ savedUserWithAge:", savedUserWithAge)
+        return savedUserWithAge */
+    } catch (error) {
+        console.error("❌ Error en createUserService", error);
+        throw {
+            statusCode: error.statusCode || 500,
+            message: error.message || "Error interno del servidor",
+            errors: error.errors || null
+        }
+    }
+}
+
+const updateUserService = async (id, data) => { //Updates a user's information by their ID. @param {Object} data - The fields to update for the user.
+    console.log('SERVICE → updateUserService')
+    try {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw {
+                statusCode: 400,
+                message: "Id inválido"
+            };
+        } //@throws {Error} If the user is not found or if validation fails.
+
+        const user = await User.findById(id) // ← Returns null if invalid/not found
+
+        if (!user) {
+            throw {
+                statusCode: 400,
+                message: "Usuario no encontrado"
+            }
         }
 
-        const [updatedUserWithAge] = await calculateAge([updatedUser])
-        return updatedUserWithAge
+        //El eamil existe pero no es modificable
+        if (data.email !== undefined) {
+            throw {
+                statusCode: 400,
+                message: "El email no puede modificarse"
+            };
+        }
+        // Si otro usuario ya tiene ese userName, informar que el nombre de usuario ya existe:
+        /* if () {
+            throw {
+                statusCode: 400,
+                message: "El nombre de usuario ya existe"
+            };
+        } */
+
+        const allowedFields = [
+            "nombre",
+            "apellido",
+            "fechaNacimiento",
+            "edad",
+            "genero",
+            "telefono",
+            "direccion",
+            "localidad",
+            "provincia",
+            "pais",
+            "codigoPostal",
+            "userName"
+        ];
+
+        allowedFields.forEach((field) => {
+            if (data[field] !== undefined) {
+                user[field] = data[field];
+            }
+        });
+
+        //Cambiar password si viene informada
+        if (data.password !== undefined) {
+            user.password = await bcrypt.hash(
+                data.password,
+                10
+            );
+        }
+
+        await user.save()
+
+        return {
+            id: user._id,
+            nombre: user.nombre,
+            apellido: user.apellido,
+            email: user.email,
+            fechaNacimiento: user.fechaNacimiento,
+            edad: user.edad,
+            genero: user.genero,
+            telefono: user.telefono,
+            direccion: user.direccion,
+            localidad: user.localidad,
+            provincia: user.provincia,
+            pais: user.pais,
+            codigoPostal: user.codigoPostal,
+            userName: user.userName
+        };
+        /* const [updatedUserWithAge] = await calculateAge([user])
+        return updatedUserWithAge */ // @returns {Promise<Object>} The updated user object with calculated age.
     } catch (error) {
-        throw error
+        console.error (
+            "❌ Error en updateUserService:", error
+        );
+
+        throw {
+            statusCode: error.statusCode || 500,
+            message: error.message || "Error interno del servidor",
+            errors: error.errors || null,
+        };
     }
 }
 

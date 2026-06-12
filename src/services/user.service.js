@@ -221,7 +221,7 @@ const updateUserService = async (id, data) => { //Updates a user's information b
         /* const [updatedUserWithAge] = await calculateAge([user])
         return updatedUserWithAge */ // @returns {Promise<Object>} The updated user object with calculated age.
     } catch (error) {
-        console.error (
+        console.error(
             "❌ Error en updateUserService:", error
         );
 
@@ -234,30 +234,61 @@ const updateUserService = async (id, data) => { //Updates a user's information b
 }
 
 const deleteUserService = async (id) => {
+    console.log('SERVICE → deleteUserService')
+
+    let session;
+
     try {
-        console.log('SERVICE → deleteUserService')
-        console.log(id)
-
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new Error('Usuario no encontrado')
+            throw {
+                statusCode: 400,
+                message: "Id inválido"
+            };
         }
-        const user = await User.findById(id)
 
-        //AUDITORIA
-        await Audit.create({
-            usuarioEliminado: user
-        })
+        session = await mongoose.startSession();
 
-        await User.findByIdAndDelete(id)
+        await session.withTransaction(async () => {
+            const user = await User.findById(id)
+            .session(session);
+
+            if (!user) {
+                throw {
+                    statusCode: 404,
+                    message: "Usuario no encontrado"
+                };
+            }
+
+            await Audit.create(
+                [
+                    {
+                        usuarioEliminado: user.toObject(),
+                        fechaEliminacion: new Date(),
+                    },
+                ],
+                { session }
+            );
+
+            await user.deleteOne({ session }); //Eliminar usuario y cerrar session
+        });
 
         return {
-            mesage: 'Usuario eliminado'
-        }
-        console.log('---')
+            message: "Usuario eliminado",
+        };
+
     } catch (error) {
-        throw error
+        console.error ("❌ Error en deleteUserService", error);
+        throw {
+            statusCode: error.statusCode || 500,
+            message: error.message || "Error interno del servidor",
+            errors: error.errors || null,
+        };
+    } finally { //si ni el try ni el catch la cierran, que se cierre la session
+        if (session) {
+            await session.endSession();
+        }
     }
-}
+};
 
 export {
     getUsersService,

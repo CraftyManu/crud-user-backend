@@ -49,16 +49,27 @@ const createUser = async (req, res) => {
         const { error } = createUserSchema.validate(req.body) //compara con el archivo dto, es un proceso rápido
         if (error) {
             console.log("there's an error in the data sent to createUserSchema")
-            return res.status(400).json({
-                error: error.details[0].message
-            })
+            return errorResponse(
+                res,
+                "Error de validación",
+                400,
+                error.details
+            );
         }
-
-        const user = await createUserService(req.body) //es un proceso más lento, tiene que verificar contra el modelo, tiene que sacar la contraseña y encriptarla, guarda nuevo objeto con contraseña encriptada, puede verificar si el mail ya existe y luego guarda en la database...
-        res.status(201).json(user)
-
+        const user = await createUserService(req.body); //es un proceso más lento, tiene que verificar contra el modelo, tiene que sacar la contraseña y encriptarla, guarda nuevo objeto con contraseña encriptada, puede verificar si el mail ya existe y luego guarda en la database...
+        return successResponse(
+            res,
+            user,
+            "Usuario creado correctamente",
+            201
+        );
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        return errorResponse(
+            res,
+            error.message || "Error interno del servidoer",
+            error.statusCode || 500,
+            error.errors || null
+        );
     }
 }
 

@@ -11,15 +11,36 @@ import {
     deleteUserService
 } from "../services/user.service.js"
 
+import {
+    successResponse,
+    errorResponse
+} from "../helpers/response.helper.js"
+
 const getUsers = async (req, res) => {
+    console.log('🎮 CONTROLLER → getUsers')
     try {
-        console.log('🎮 CONTROLLER → getUsers')
-        const users = await getUsersService()
-        res.json(users)
+        const { email, id } = req.query;
+        const users = await getUsersService({
+            email,
+            id,
+        });
+
+        return successResponse(
+            res,
+            users,
+            "Usuarios obtenidos correctamente"
+        );
+
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        /* res.status(500).json({ error: error.message }) */
+        return errorResponse(
+            res,
+            error.message || "Error interno del servidor",
+            error.statusCode || 500,
+            error.errors || null
+        );
     }
-}
+};
 
 const createUser = async (req, res) => {
     try {

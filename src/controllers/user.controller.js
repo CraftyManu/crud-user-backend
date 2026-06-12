@@ -71,59 +71,86 @@ const createUser = async (req, res) => {
             error.errors || null
         );
     }
-}
+};
 
 const updateUser = async (req, res) => {
     try {
-        console.log('🎮 CONTROLLER → updateUser')
-        //Validar DTO
-        const { error: paramsError } = userParamsSchema.validate(req.params)
-        console.log('updateUser - error', paramsError)
+        const { error: paramsError } =
+            userParamsSchema.validate(req.params);
 
         if (paramsError) {
-            return res.status(400).json({
-                message: "ID invalido"
-            })
+            return errorResponse(
+                res,
+                "Id inválido",
+                400,
+                paramsError.details
+            );
         }
 
-        const { error } = updateUserSchema.validate(req.body)
+        const { error } =
+            updateUserSchema.validate(req.body);
+
         if (error) {
-            return res.status(400).json({
-                error: error.details[0].message
-            })
+            return errorResponse(
+                res,
+                "Error de validación",
+                400,
+                error.details
+            );
         }
 
         const user = await updateUserService(
             req.params.id,
             req.body
-        )
-        res.json(user)
-        console.log('user: ')
-        console.log(user)
+        );
+
+        return successResponse(
+            res,
+            user,
+            "Usuario actualizado correctamente"
+        );
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        return errorResponse(
+            res,
+            error.message || "Error interno del servidor",
+            error.statusCode || 500,
+            error.errors || null
+        );
     }
-}
+};
 
 const deleteUser = async (req, res) => {
     try {
-        console.log('🎮 CONTROLLER → deleteUser')
-        //Validar DTO
-        const { error: paramsError } = userParamsSchema.validate(req.params)
-        console.log('updateUser - error', paramsError)
+        const { error: paramsError } =
+            userParamsSchema.validate(req.params);
 
         if (paramsError) {
-            return res.status(400).json({
-                message: "ID invalido"
-            })
+            return errorResponse(
+                res,
+                "Id inválido",
+                400,
+                paramsError.details
+            );
         }
 
-        const result = await deleteUserService(req.params.id)
-        res.json(result)
+        const result = await deleteUserService(
+            req.params.id
+        );
+
+        return successResponse(
+            res,
+            result,
+            "Usuario eliminado correctamente"
+        );
     } catch (error) {
-        res.status(500).json({ error: error.message })
+        return errorResponse(
+            res,
+            error.message || "Error interno del servidor",
+            error.statusCode || 500,
+            error.errors || null
+        );
     }
-}
+};
 
 export {
     getUsers,

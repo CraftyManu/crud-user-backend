@@ -60,25 +60,10 @@ const userParamsSchema = Joi.object({
     })
 });
 
-/* const checkUniqueUsername = async (value) => {
-    console.log("🚀 ~ checkUniqueUsername user.dto.js")
-
-    const userExists = await User.findOne({
-        userName: value
-    })
-
-    if (userExists) {
-        throw new Error('Ese "Nombre de Usuario" ya existe');
-    }
-
-    return value; // Return the value if validation passes
-};
- */
 export {
     createUserSchema,
     updateUserSchema,
     userParamsSchema,
-    /*   checkUniqueUsername */
 }
 
 

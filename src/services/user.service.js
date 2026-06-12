@@ -1,14 +1,12 @@
-// esta es la última capa?
 import bcrypt from "bcryptjs"
 import User from '../models/user.model.js'
 import Audit from '../models/audit.model.js' //models va a llamar a la database, por eso no necesito importarla en este archivo
-import mongoose from "mongoose" //to validate id
-/* import { checkUniqueUsername } from "../dto/user.dto.js" */
-import calculateAge from "../dao/functions/dao.users.js"
+import mongoose from "mongoose" //to validate id       /* import { checkUniqueUsername } from "../dto/user.dto.js" */ /* import calculateAge from "../dao/functions/dao.users.js" */
 
 const getUsersService = async ({ email, id }) => {
+    console.log('SERVICE → getUsersService')
+
     try {
-        console.log('SERVICE → getUsersService')
         // buscar por ID
         if (id) {
             if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -28,14 +26,12 @@ const getUsersService = async ({ email, id }) => {
                 }
             }
 
-            /* return user; */
-            console.log("🚀 ~ getUsersService ~ calculateAge:")
+            return user; 
+            /* console.log("🚀 ~ getUsersService ~ calculateAge:")
             const usersWithAge = await calculateAge(user);
-            return usersWithAge;
+            return usersWithAge; */
         }
-
         //Buscar por email
-
         if (email) {
             const user = await User.findOne({ email }).select("-password");
 
@@ -46,13 +42,15 @@ const getUsersService = async ({ email, id }) => {
                 }
             }
 
-            /* return user */
-            const usersWithAge = await calculateAge(user)
+            return user 
+            /* const usersWithAge = await calculateAge(user)
             console.log("🚀 ~ getUsersService ~ calculateAge:")
-            return usersWithAge
+            return usersWithAge */
         }
-        //Todos los usuarios
-        return await (await User.find().select("-password")).sort({ nombre: 1 });
+        //Obtener todos los usuarios
+        console.log("todos los usuarios")
+        return await User.find()
+        .select("-password").sort({ nombre: 1 });
 
 
     } catch (error) {
@@ -295,4 +293,4 @@ export {
     createUserService,
     updateUserService,
     deleteUserService
-}
+};

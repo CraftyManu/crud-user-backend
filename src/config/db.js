@@ -1,6 +1,7 @@
 import mongoose from 'mongoose' //importa todo
 
 import { env } from './env.js' //importa solo la funcion dentro de { } 
+
 const connectDB = async () => {
     try {
         console.log('🔄 Conectando MongoDB...')

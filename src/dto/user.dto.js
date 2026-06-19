@@ -9,7 +9,7 @@ const createUserSchema = Joi.object({
         "date.base": "La fecha de nacimiento ingresada debe ser una fecha válida",
         "date.format": "La fecha de nacimiento debe estar en formato AAAA-MM-DD"
     }),
-    edad: Joi.number().integer().min(1).max(120).required().messages({
+    edad: Joi.number().integer().min(1).max(120).messages({ //not required -> la calculo en functions/dao
         "number.base": "La edad debe ser numérica",
         "number.integer": "La edad debe ser un número entero",
         "number.min": "La edad debe ser mayor a 0",

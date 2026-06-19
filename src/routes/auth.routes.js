@@ -1,11 +1,9 @@
 import express from 'express'
 
-import {  // importamos todos los metodos que creamos en controllers
-
-} from '../controllers/auth.controller.js'
+import { login } from '../controllers/auth.controller.js' // importamos todos los metodos que creamos en controllers
 
 const router = express.Router()
 
-router.post('/auth/login', loginUser)
+router.post('/login', login,)
 
-export default router
+export default router;

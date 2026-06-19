@@ -28,36 +28,45 @@ const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
     },
     genero: {
         type: String,
-        required: true
+        required: true,
     },
     telefono: {
         type: String,
-        required: true
+        required: true,
     },
     direccion: {
         type: String,
-        required: true
+        required: true,
     },
     localidad: {
         type: String,
-        required: true
+        required: true,
     },
     provincia: {
         type: String,
-        required: true
+        required: true,
     },
     pais: {
         type: String,
-        required: true
+        required: true,
     },
     codigoPostal: {
         type: String,
-        required: true
+        required: true,
     },
-    userName: {
+    role: {
+        type: String,
+        enum: ["ROOT", "ADMIN", "USER", "GUEST"],
+        default: "USER",
+    },
+    ultimoLogin: {
+        type: Date,
+        default: null,
+    },
+/*     userName: {
         type: String,
         required: true
-    } 
+    }  */
 }, {
     timestamps: true //hora utc0 (-3 para nuestro uso horario)
 })

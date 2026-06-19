@@ -1,5 +1,7 @@
 import Joi from 'joi'
 
+const roles = [ "ROOT", "ADMIN", "USER", "GUEST",];
+
 const createUserSchema = Joi.object({
     nombre: Joi.string().trim().min(2).max(100).required(),
     apellido: Joi.string().trim().min(2).max(100).required(),
@@ -22,9 +24,9 @@ const createUserSchema = Joi.object({
     provincia: Joi.string().trim().max(100).required(),
     pais: Joi.string().trim().max(100).required(),
     codigoPostal: Joi.string().trim().max(20).required(),
-    userName: Joi.string().trim().min(2).max(100).required(), 
-
-})
+    role: Joi.string().valid(...roles).default("USER").messages({"any.only": `El rol debe ser uno de los siguientes: ${roles.join(", ")}`,}),
+    /* userName: Joi.string().trim().min(2).max(100).required(),  */
+});
 
 const updateUserSchema = Joi.object({
     nombre: Joi.string().trim().min(2).max(100),
@@ -49,7 +51,8 @@ const updateUserSchema = Joi.object({
     provincia: Joi.string().trim().max(100),
     pais: Joi.string().trim().max(100),
     codigoPostal: Joi.string().trim().max(20),
-    userName: Joi.string().trim().min(2).max(100), 
+    role: Joi.string().valid(...roles).messages({"any.only": `El rol debe ser uno de los siguientes: ${roles.join(", ")}`})
+    /* userName: Joi.string().trim().min(2).max(100),  */
 })
 
 const userParamsSchema = Joi.object({

@@ -23,8 +23,8 @@ const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
         required: true,
     },
     edad: {
-        type: Number /* ,
-        required: true */
+        type: Number  ,
+        /* required: true */ //not required -> la calculo en base a fecha de nacimiento
     },
     genero: {
         type: String,

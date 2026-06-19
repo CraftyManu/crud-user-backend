@@ -85,7 +85,7 @@ const createUserService = async (data) => {
             data.password,
             10
         )
-
+        //calcular edad
         const user = new User({
             nombre: data.nombre,
             apellido: data.apellido,
@@ -168,6 +168,8 @@ const updateUserService = async (id, data) => { //Updates a user's information b
                 message: "El nombre de usuario ya existe"
             };
         } */
+
+            //calcular edad
 
         const allowedFields = [
             "nombre",

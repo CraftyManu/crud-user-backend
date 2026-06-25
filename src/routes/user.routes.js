@@ -15,12 +15,9 @@ const router = express.Router()
 //exponemos las rutas y las ejecutamos
 
 /* router.get('/users', getUsers) */
-router.get('/users',authMiddleware, authorizeRoles('ROOT', 'ADMIN') , getUsers)
-
-/* router.post('/users', createUser) */
-router.post('/users', authMiddleware, authorizeRoles('ROOT', 'ADMIN'),createUser)
-
-router.put('/users/:id', updateUser)
-router.delete('/users/:id', deleteUser)
+router.get('/users', authMiddleware, authorizeRoles('ROOT', 'ADMIN') , getUsers)
+router.post('/users', authMiddleware, authorizeRoles('ROOT', 'ADMIN'), createUser)
+router.put('/users/:id', authMiddleware, authorizeRoles('ROOT', 'ADMIN'), updateUser)
+router.delete('/users/:id', authMiddleware, authorizeRoles('ROOT', 'ADMIN'), deleteUser)
 
 export default router

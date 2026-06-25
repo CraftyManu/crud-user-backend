@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
         required: true,
     },
     edad: {
-        type: Number  ,
+        type: Number,
         /* required: true */ //not required -> la calculo en base a fecha de nacimiento
     },
     genero: {
@@ -63,10 +63,10 @@ const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
         type: Date,
         default: null,
     },
-/*     userName: {
+    userName: {
         type: String,
-        required: true
-    }  */
+        /* required: true */
+    }
 }, {
     timestamps: true //hora utc0 (-3 para nuestro uso horario)
 })

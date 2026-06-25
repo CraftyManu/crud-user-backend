@@ -1,5 +1,5 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs"; //encripta contraseña
+import jwt from "jsonwebtoken"; //genera token
 import User from "../models/user.model.js" //para validar el mail
 import { env } from "../config/env.js" //para que expire la sesión
 
@@ -23,13 +23,11 @@ const loginService = async (data) => {
             };
         }
 
-        //Actualizar fecha y hora del último login
-        user.ultimoLogin = new Date();
+        user.ultimoLogin = new Date();  //Actualizar fecha y hora del último login
 
         await user.save();
 
         //Payload del token (cuerpo de la petición -> que datos pasamos para armar el token)
-
         const payload = {
             userId: user._id,
             role: user.role,
@@ -40,7 +38,7 @@ const loginService = async (data) => {
 
         return {
             token,
-            role: user.role, //para comprobar que los roles enviados sean los correctos, cuando este checkeado que funciona eliminamos
+            role: user.role, //para comprobar que los roles enviados sean los correctos -> cuando este checkeado que funciona eliminamos
         };
 
     } catch (error) {

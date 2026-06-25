@@ -51,8 +51,8 @@ const updateUserSchema = Joi.object({
     provincia: Joi.string().trim().max(100),
     pais: Joi.string().trim().max(100),
     codigoPostal: Joi.string().trim().max(20),
-    role: Joi.string().valid(...roles).messages({"any.only": `El rol debe ser uno de los siguientes: ${roles.join(", ")}`})
-    /* userName: Joi.string().trim().min(2).max(100),  */
+    role: Joi.string().valid(...roles).messages({"any.only": `El rol debe ser uno de los siguientes: ${roles.join(", ")}`}),
+    userName: Joi.string().trim().min(2).max(100), 
 })
 
 const userParamsSchema = Joi.object({

@@ -19,7 +19,12 @@ import {
 const getUsers = async (req, res) => {
     console.log('🎮 CONTROLLER → getUsers')
     try {
-        const { email, id } = req.query;
+        /* const { email, id } = req.query; */
+        //
+        const { email } = req.query;
+        const id = req.params?.id || req.query?.id;
+        //
+
         const users = await getUsersService({
             email,
             id,

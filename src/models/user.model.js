@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema({ //new xq es un usuario nuevo
     role: {
         type: String,
         enum: ["ROOT", "ADMIN", "USER", "GUEST"],
-        default: "USER",
+        default: "USER", 
     },
     ultimoLogin: {
         type: Date,

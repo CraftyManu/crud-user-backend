@@ -3,12 +3,15 @@ import User from '../models/user.model.js'
 import Audit from '../models/audit.model.js' //models va a llamar a la database, por eso no necesito importarla en este archivo
 import mongoose from "mongoose" //to validate id       /* import { checkUniqueUsername } from "../dto/user.dto.js" */ /* import calculateAge from "../dao/functions/dao.users.js" */
 
+import calculateAge from "../functions/dao/dao.users.js"
+
 const getUsersService = async ({ email, id }) => {
     console.log('SERVICE → getUsersService')
 
     try {
         // buscar por ID
         if (id) {
+            console.log('Buscar por id')
             if (!mongoose.Types.ObjectId.isValid(id)) {
                 throw {
                     statusCode: 400,
@@ -25,9 +28,12 @@ const getUsersService = async ({ email, id }) => {
                     message: "Usuario no encontrado"
                 }
             }
+            console.log("🚀 ~ getUsersService ~ calculateAge:")
+            calculateAge(user)
+            console.log("🚀 ~ getUsersService ~ user:", user)
 
-            return user; 
-            /* console.log("🚀 ~ getUsersService ~ calculateAge:")
+            return user;
+            /*
             const usersWithAge = await calculateAge(user);
             return usersWithAge; */
         }
@@ -42,15 +48,21 @@ const getUsersService = async ({ email, id }) => {
                 }
             }
 
-            return user 
-            /* const usersWithAge = await calculateAge(user)
             console.log("🚀 ~ getUsersService ~ calculateAge:")
-            return usersWithAge */
+            calculateAge(user)
+            console.log("🚀 ~ getUsersService ~ user:", user)
+
+            return user
         }
         //Obtener todos los usuarios
         console.log("todos los usuarios")
-        return await User.find()
-        .select("-password").sort({ nombre: 1 });
+        /* return await User.find()
+            .select("-password").sort({ nombre: 1 }); */
+        const allUsers = await User.find()
+            .select("-password").sort({ nombre: 1 });
+        console.log("🚀 ~ getUsersService ~ calculateAge:")
+        return calculateAge(allUsers)
+        console.log("🚀 ~ getUsersService ~ user:", user)
 
 
     } catch (error) {
@@ -85,7 +97,8 @@ const createUserService = async (data) => {
             data.password,
             10
         )
-        //calcular edad
+        //calcular edad:
+
         const user = new User({
             nombre: data.nombre,
             apellido: data.apellido,
@@ -122,9 +135,6 @@ const createUserService = async (data) => {
             userName: user.userName
         }; // desgloso el objeto para asegurarme de que no se envía la contraseña
 
-        /* const [savedUserWithAge] = await calculateAge({user});
-        console.log("🚀 ~ createUserService ~ savedUserWithAge:", savedUserWithAge)
-        return savedUserWithAge */
     } catch (error) {
         console.error("❌ Error en createUserService", error);
         throw {
@@ -169,7 +179,7 @@ const updateUserService = async (id, data) => { //Updates a user's information b
             };
         } */
 
-            //calcular edad
+        //calcular edad
 
         const allowedFields = [
             "nombre",
@@ -183,6 +193,7 @@ const updateUserService = async (id, data) => { //Updates a user's information b
             "provincia",
             "pais",
             "codigoPostal",
+            /* "role", */
             "userName"
         ];
 
@@ -216,6 +227,7 @@ const updateUserService = async (id, data) => { //Updates a user's information b
             provincia: user.provincia,
             pais: user.pais,
             codigoPostal: user.codigoPostal,
+            role: user.role,
             userName: user.userName
         };
         /* const [updatedUserWithAge] = await calculateAge([user])
@@ -250,7 +262,7 @@ const deleteUserService = async (id) => {
 
         await session.withTransaction(async () => {
             const user = await User.findById(id)
-            .session(session);
+                .session(session);
 
             if (!user) {
                 throw {
@@ -277,7 +289,7 @@ const deleteUserService = async (id) => {
         };
 
     } catch (error) {
-        console.error ("❌ Error en deleteUserService", error);
+        console.error("❌ Error en deleteUserService", error);
         throw {
             statusCode: error.statusCode || 500,
             message: error.message || "Error interno del servidor",

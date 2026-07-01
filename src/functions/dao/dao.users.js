@@ -1,7 +1,10 @@
 const calculateAge = async (users) => {
     const today = new Date();
 
-    for (const user of users) {
+        // Cuando busco por id es un único objeto -> convertirlo en array
+    const userList = Array.isArray(users) ? users : [users];
+
+    for (const user of userList) {
         const birthDate = new Date(user.fechaNacimiento);
         let edad = today.getFullYear() - birthDate.getFullYear();
         const monthDifference = today.getMonth() - birthDate.getMonth();
@@ -16,7 +19,9 @@ const calculateAge = async (users) => {
         user.edad = edad;
     }
 
-    return users;
+    /* return users; */
+    //Devolver el mismo tipo de variable que fue recibida (objeto vs. array):
+    return Array.isArray(users) ? userList : userList[0];
 }
 
 export default calculateAge

@@ -1,4 +1,4 @@
-const calculateAge = async (users) => {
+const calcularEdad = async (users) => {
     const today = new Date();
 
         // Cuando busco por id es un único objeto -> convertirlo en array
@@ -24,5 +24,5 @@ const calculateAge = async (users) => {
     return Array.isArray(users) ? userList : userList[0];
 }
 
-export default calculateAge
+export default calcularEdad
 

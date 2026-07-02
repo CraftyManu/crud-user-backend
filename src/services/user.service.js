@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs"
 import User from '../models/user.model.js'
 import Audit from '../models/audit.model.js' //models va a llamar a la database, por eso no necesito importarla en este archivo
-import mongoose from "mongoose" //to validate id       /* import { checkUniqueUsername } from "../dto/user.dto.js" */ /* import calculateAge from "../dao/functions/dao.users.js" */
+import mongoose from "mongoose" //to validate id       /* import { checkUniqueUsername } from "../dto/user.dto.js" */ /* import calcularEdad from "../dao/functions/dao.users.js" */
 
-import calculateAge from "../functions/edad/edad.users.js"
+import calcularEdad from "../functions/edad/edad.users.js"
 
 const getUsersService = async ({ email, id }) => {
     console.log('SERVICE → getUsersService')
@@ -28,13 +28,13 @@ const getUsersService = async ({ email, id }) => {
                     message: "Usuario no encontrado"
                 }
             }
-            console.log("🚀 ~ getUsersService ~ calculateAge:")
-            calculateAge(user)
+            console.log("🚀 ~ getUsersService ~ calcularEdad:")
+            calcularEdad(user)
             console.log("🚀 ~ getUsersService ~ user:", user)
 
             return user;
             /*
-            const usersWithAge = await calculateAge(user);
+            const usersWithAge = await calcularEdad(user);
             return usersWithAge; */
         }
         //Buscar por email
@@ -48,8 +48,8 @@ const getUsersService = async ({ email, id }) => {
                 }
             }
 
-            console.log("🚀 ~ getUsersService ~ calculateAge:")
-            calculateAge(user)
+            console.log("🚀 ~ getUsersService ~ calcularEdad:")
+            calcularEdad(user)
             console.log("🚀 ~ getUsersService ~ user:", user)
 
             return user
@@ -60,8 +60,8 @@ const getUsersService = async ({ email, id }) => {
             .select("-password").sort({ nombre: 1 }); */
         const allUsers = await User.find()
             .select("-password").sort({ nombre: 1 });
-        console.log("🚀 ~ getUsersService ~ calculateAge:")
-        return calculateAge(allUsers)
+        console.log("🚀 ~ getUsersService ~ calcularEdad:")
+        return calcularEdad(allUsers)
         console.log("🚀 ~ getUsersService ~ user:", user)
 
 
@@ -72,7 +72,7 @@ const getUsersService = async ({ email, id }) => {
             errors: error.errors || null,
         };
     };
-    /* console.log("🚀 ~ getUsersService ~ calculateAge:")
+    /* console.log("🚀 ~ getUsersService ~ calcularEdad:")
 console.log(usersWithAge) */
     console.log('---')
     /* return usersWithAge */
@@ -230,7 +230,7 @@ const updateUserService = async (id, data) => { //Updates a user's information b
             role: user.role,
             userName: user.userName
         };
-        /* const [updatedUserWithAge] = await calculateAge([user])
+        /* const [updatedUserWithAge] = await calcularEdad([user])
         return updatedUserWithAge */ // @returns {Promise<Object>} The updated user object with calculated age.
     } catch (error) {
         console.error(

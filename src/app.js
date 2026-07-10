@@ -2,7 +2,6 @@ import express from 'express'
 import './config/env.js'
 import connectDB from './config/db.js'
 import corsConfig from './config/cors.js'
-/* import { env } from "./config/env.js"  */
 import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.js'
 
@@ -15,8 +14,8 @@ connectDB() //llamar a la base de datos
 app.use(userRoutes) //ruta de usuarios
 app.use("/auth", authRoutes);
 
-app.listen(env.PORT, () => {
-    console.log(`🚀 Servidor corriendo en puerto ${env.PORT} 🚢`) //process.env.PORT
+app.listen(process.env.PORT, () => {
+    console.log(`🚀 Servidor corriendo en puerto ${process.env.PORT} 🚢`) //process.env.PORT
 })
 
 

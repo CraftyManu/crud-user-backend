@@ -1,19 +1,19 @@
-import express from 'express'
+import express from "express";
 
-import { getUsers, createUser, updateUser, deleteUser } from '../controllers/user.controller.js' // importamos todos los metodos que creamos en controllers
+import { getUsers, createUser, updateUser, deleteUser } from "../controllers/user.controller.js"; // importamos todos los metodos que creamos en controllers
 
-import { authMiddleware } from '../middlewares/auth.middleware.js'
-import { authorizeRoles } from '../middlewares/role.middleware.js'
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { authorizeRoles } from "../middlewares/role.middleware.js";
 
-const router = express.Router()
+const router = express.Router();
 
 //exponemos las rutas y las ejecutamos
 
 /* router.get('/users', getUsers) */
-router.get('/users', authMiddleware, authorizeRoles('ROOT', 'ADMIN'), getUsers)
-router.post('/users', authMiddleware, authorizeRoles('ROOT', 'ADMIN'), createUser)
-router.put('/users/:id', authMiddleware, authorizeRoles('ROOT', 'ADMIN'), updateUser)
-router.delete('/users/:id', authMiddleware, authorizeRoles('ROOT', 'ADMIN'), deleteUser)
+router.get("/users", authMiddleware, authorizeRoles("ROOT", "ADMIN"), getUsers);
+router.post("/users", authMiddleware, authorizeRoles("ROOT", "ADMIN"), createUser);
+router.put("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN"), updateUser);
+router.delete("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN"), deleteUser);
 
-router.get('/users/:id', authMiddleware, authorizeRoles('ROOT', 'ADMIN'), getUsers)
-export default router
+router.get("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN"), getUsers);
+export default router;

@@ -16,4 +16,5 @@ router.put("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN"), update
 router.delete("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN"), deleteUser);
 
 router.get("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN"), getUsers);
+
 export default router;

@@ -4,10 +4,13 @@ import connectDB from "./config/db.js";
 import corsConfig from "./config/cors.js";
 import userRoutes from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import { rateLimiter } from "./middlewares/rateLimit.middleware.js"
 
 const app = express(); //levanta el backend como función
+app.set("trust proxy", 1);
 app.use(corsConfig);
 app.use(express.json()); //para poder usar json desde el body
+app.use(rateLimiter);
 connectDB(); //llamar a la base de datos
 
 //llamar a las rutas

@@ -28,7 +28,6 @@ Backend para gestionar usuarios con autenticación JWT, roles y conexión a Mong
 - bcryptjs
 - CORS
 
-
 ## Instalación
 
 1. Clonar el repositorio
@@ -44,7 +43,7 @@ Backend para gestionar usuarios con autenticación JWT, roles y conexión a Mong
 npm install
 ```
 
-3. Crear un archivo  `.env` en la raíz del proyecto con las siguientes variables:
+3. Crear un archivo `.env` en la raíz del proyecto con las siguientes variables:
 
    ```env
    PORT=7000
@@ -98,9 +97,9 @@ src/
 
 ### 1) Login (Authentication)
 
-| Method | Endpoint | Description | Requiere Token |
-|--------|----------|-------------|----------------|
-| POST | `/auth/login` | Login a user and receive a JWT token | No |
+| Method | Endpoint      | Description                          | Requiere Token |
+| ------ | ------------- | ------------------------------------ | -------------- |
+| POST   | `/auth/login` | Login a user and receive a JWT token | No             |
 
 #### Headers
 
@@ -137,6 +136,7 @@ El login devuelve un token JWT. Para los endpoints protegidos, debes enviar este
 ```http
 Authorization: Bearer <your_jwt_token>
 ```
+
 ---
 
 ### 2) Listar usuarios
@@ -145,9 +145,9 @@ Authorization: Bearer <your_jwt_token>
 - Ruta: /users
 - Requiere token: No (actualmente)
 
-| Method | Endpoint | Description | Requiere Token |
-|--------|----------|-------------|----------------|
-| GET | `/users` | Devuelve la lista de todos los usuarios | Si |
+| Method | Endpoint | Description                             | Requiere Token |
+| ------ | -------- | --------------------------------------- | -------------- |
+| GET    | `/users` | Devuelve la lista de todos los usuarios | Si             |
 
 #### Headers
 
@@ -182,9 +182,9 @@ curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
 
 ### 3) Crear usuario
 
-| Method | Endpoint | Description | Requiere Token |
-|--------|----------|-------------|----------------|
-| POST | `/users` | Crea un nuevo usuario | No (actualmente) |
+| Method | Endpoint | Description           | Requiere Token   |
+| ------ | -------- | --------------------- | ---------------- |
+| POST   | `/users` | Crea un nuevo usuario | No (actualmente) |
 
 #### Headers
 
@@ -255,9 +255,9 @@ curl -X POST http://localhost:7000/users \
 
 - Roles permitidos: ROOT, ADMIN
 
-| Method | Endpoint | Description | Requiere Token |
-|--------|----------|-------------|----------------|
-| PUT | `/users/:id` | Devuelve los datos del usuario solicitado | Si |
+| Method | Endpoint     | Description                               | Requiere Token |
+| ------ | ------------ | ----------------------------------------- | -------------- |
+| PUT    | `/users/:id` | Devuelve los datos del usuario solicitado | Si             |
 
 #### Headers
 
@@ -305,9 +305,9 @@ curl -X PUT http://localhost:7000/users/6a52573bbf379ab68dad7dd3 \
 
 - Roles permitidos: ROOT, ADMIN
 
-| Method | Endpoint | Description | Requiere Token |
-|--------|----------|-------------|----------------|
-| DELETE | `/users/:id` | Elimina el usuario | Si |
+| Method | Endpoint     | Description        | Requiere Token |
+| ------ | ------------ | ------------------ | -------------- |
+| DELETE | `/users/:id` | Elimina el usuario | Si             |
 
 #### Headers
 
@@ -354,15 +354,15 @@ Además, para los endpoints de actualización y eliminación, el usuario debe te
 
 All user routes require a valid Bearer token and the role must be `ROOT` or `ADMIN`.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/users` | Get all users |
-| GET | `/users/:id` | Get a user by ID |
-| GET | `/users/:email` | Get a user by ID |
-| POST | `/users` | Create a new user |
-| PUT | `/users/:id` | Update a user by ID |
-| PUT | `/users/:email` | Update a user by email |
-| DELETE | `/users/:id` | Delete a user by ID |
+| Method | Endpoint        | Description            |
+| ------ | --------------- | ---------------------- |
+| GET    | `/users`        | Get all users          |
+| GET    | `/users/:id`    | Get a user by ID       |
+| GET    | `/users/:email` | Get a user by ID       |
+| POST   | `/users`        | Create a new user      |
+| PUT    | `/users/:id`    | Update a user by ID    |
+| PUT    | `/users/:email` | Update a user by email |
+| DELETE | `/users/:id`    | Delete a user by ID    |
 
 ## Roles disponibles
 
@@ -395,4 +395,3 @@ All user routes require a valid Bearer token and the role must be `ROOT` or `ADM
 - `FRONTEND_URLS` is used by the CORS configuration.
 - The `email` field is unique for each user.
 - `password` is stored securely as a hashed value.
-

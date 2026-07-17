@@ -6,9 +6,9 @@ const getUsers = async (req, res) => {
   console.log("🎮 CONTROLLER → getUsers");
   try {
     /* const { email, id } = req.query; */
-    //
+    // 
     const { email } = req.query;
-    const id = req.params?.id || req.query?.id;
+    const id = req.params?.id || req.query?.id; 
     //
 
     const users = await getUsersService({
@@ -19,8 +19,8 @@ const getUsers = async (req, res) => {
     });
     return successResponse(res, users, "Usuarios obtenidos correctamente");
   } catch (error) {
-    if (error.statusCode === 403){
-      return forbiddenResponse(res, error.message || "Acceso denegado", error.errors || null)
+    if (error.statusCode === 403) {
+      return forbiddenResponse(res, error.message || "Acceso denegado", error.errors || null);
     }
     /* res.status(500).json({ error: error.message }) */
     return errorResponse(res, error.message || "Error interno del servidor", error.statusCode || 500, error.errors || null);

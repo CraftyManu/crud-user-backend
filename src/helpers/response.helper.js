@@ -20,10 +20,11 @@ export const errorResponse = (res, message = "Error interno del servidor", statu
 };
 
 export const forbiddenResponse = (res, message = "Acceso denegado", errors = null) => {
-  return res.status(403).json({ //error conocido
+  return res.status(403).json({
+    //error conocido
     success: false,
     statusCode: 403,
     message,
     errors,
-  })
-}
+  });
+};

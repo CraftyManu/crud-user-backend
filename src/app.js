@@ -4,7 +4,7 @@ import connectDB from "./config/db.js";
 import corsConfig from "./config/cors.js";
 import userRoutes from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
-import { rateLimiter } from "./middlewares/rateLimit.middleware.js"
+import { rateLimiter } from "./middlewares/rateLimit.middleware.js";
 
 const app = express(); //levanta el backend como función
 app.set("trust proxy", 1);

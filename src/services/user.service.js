@@ -5,25 +5,25 @@ import mongoose from "mongoose"; //to validate id       /* import { checkUniqueU
 
 import calcularEdad from "../functions/edad/edad.users.js";
 
-const getUsersService = async ({ email, id }) => {
+const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
   console.log("SERVICE → getUsersService");
 
   try {
-    const role = requesterRole?.toUpperCase()
-    const currentUserId = requesterId?.toString()
+    const role = requesterRole?.toUpperCase();
+    const currentUserId = requesterId?.toString();
 
     if (!role) {
       throw {
         statusCode: 403,
         message: "No tienes permisos para ver usuarios",
-      }
+      };
     }
 
     if (role === "GUEST") {
       throw {
         statusCode: 403,
         message: "No tienes permisos para ver usuarios",
-      }
+      };
     }
 
     // buscar por ID
@@ -40,7 +40,7 @@ const getUsersService = async ({ email, id }) => {
         throw {
           statusCode: 403,
           message: "No tienes permisos para ver este usuario",
-        }
+        };
       }
 
       const user = await User.findById(id).select("-password"); //no tiene que devolver el password!
@@ -56,7 +56,7 @@ const getUsersService = async ({ email, id }) => {
         throw {
           statusCode: 403,
           message: "No tienes permisos para ver usuarios root",
-        }
+        };
       }
 
       console.log("🚀 ~ getUsersService ~ calcularEdad:");
@@ -81,14 +81,14 @@ const getUsersService = async ({ email, id }) => {
         throw {
           statusCode: 403,
           message: "No tienes permisos para ver este usuario",
-        }
+        };
       }
 
       if (role === "ADMIN" && user.role === "ROOT") {
         throw {
           statusCode: 403,
           message: "No tienes permisos para ver usuarios root",
-        }
+        };
       }
 
       console.log("🚀 ~ getUsersService ~ calcularEdad:");
@@ -101,7 +101,9 @@ const getUsersService = async ({ email, id }) => {
     //Obtener todos los usuarios
     /* return await User.find().select("-password").sort({ nombre: 1 }); */
     if (role === "ADMIN") {
-      const allUsers = await User.find({ role: { $ne: "ROOT" } }).select("-password").sort({ nombre: 1 });
+      const allUsers = await User.find({ role: { $ne: "ROOT" } })
+        .select("-password")
+        .sort({ nombre: 1 });
       console.log("🚀 ~ getUsersService ~ calcularEdad: 👤👤👤 allUsers");
       return calcularEdad(allUsers);
       /* console.log("🚀 ~ getUsersService ~ user:", user); */
@@ -109,10 +111,10 @@ const getUsersService = async ({ email, id }) => {
     }
     const thisUser = await User.find().select("-password").sort({ nombre: 1 });
     console.log("🚀 ~ getUsersService ~ calcularEdad: 👤 thisUsers");
-    return calcularEdad(thisUser)
+    return calcularEdad(thisUser);
     /* return await User.find().select("-password").sort({ nombre: 1 }); */
   } catch (error) {
-    console.error("❌ Error en getUsersService:", error)
+    console.error("❌ Error en getUsersService:", error);
     throw {
       statusCode: error.statusCode || 500,
       message: error.message || "Error interno del servidor",

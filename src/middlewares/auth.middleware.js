@@ -17,6 +17,9 @@ const authMiddleware = (req, res, next) => {
 
     req.user = { userId: decoded.userId, role: decoded.role };
 
+    console.log("req.user:")
+    console.log(req.user)
+
     next();
   } catch (error) {
     errorResponse(res, "Token inválido", 401);

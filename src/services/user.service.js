@@ -9,6 +9,23 @@ const getUsersService = async ({ email, id }) => {
   console.log("SERVICE → getUsersService");
 
   try {
+    const role = requesterRole?.toUpperCase()
+    const currentUserId = requesterId?.toString()
+
+    if (!role) {
+      throw {
+        statusCode: 403,
+        message: "No tienes permisos para ver usuarios",
+      }
+    }
+
+    if (role === "GUEST") {
+      throw {
+        statusCode: 403,
+        message: "No tienes permisos para ver usuarios",
+      }
+    }
+
     // buscar por ID
     if (id) {
       console.log("Buscar por id");
@@ -19,24 +36,36 @@ const getUsersService = async ({ email, id }) => {
         };
       }
 
+      if (role === "USER" && id !== currentUserId) {
+        throw {
+          statusCode: 403,
+          message: "No tienes permisos para ver este usuario",
+        }
+      }
+
       const user = await User.findById(id).select("-password"); //no tiene que devolver el password!
       /* const users = await User.find().select('-password')*/ //no tiene que devolver el password!
-
       if (!user) {
         throw {
           statusCode: 404,
           message: "Usuario no encontrado",
         };
       }
+
+      if (role === "ADMIN" && user.role === "ROOT") {
+        throw {
+          statusCode: 403,
+          message: "No tienes permisos para ver usuarios root",
+        }
+      }
+
       console.log("🚀 ~ getUsersService ~ calcularEdad:");
       calcularEdad(user);
       console.log("🚀 ~ getUsersService ~ user:", user);
 
       return user;
-      /*
-            const usersWithAge = await calcularEdad(user);
-            return usersWithAge; */
     }
+
     //Buscar por email
     if (email) {
       const user = await User.findOne({ email }).select("-password");
@@ -48,21 +77,42 @@ const getUsersService = async ({ email, id }) => {
         };
       }
 
+      if (role === "USER" && user._id.toString() !== currentUserId) {
+        throw {
+          statusCode: 403,
+          message: "No tienes permisos para ver este usuario",
+        }
+      }
+
+      if (role === "ADMIN" && user.role === "ROOT") {
+        throw {
+          statusCode: 403,
+          message: "No tienes permisos para ver usuarios root",
+        }
+      }
+
       console.log("🚀 ~ getUsersService ~ calcularEdad:");
       calcularEdad(user);
       console.log("🚀 ~ getUsersService ~ user:", user);
 
       return user;
     }
+
     //Obtener todos los usuarios
-    console.log("todos los usuarios");
-    /* return await User.find()
-            .select("-password").sort({ nombre: 1 }); */
-    const allUsers = await User.find().select("-password").sort({ nombre: 1 });
-    console.log("🚀 ~ getUsersService ~ calcularEdad:");
-    return calcularEdad(allUsers);
-    console.log("🚀 ~ getUsersService ~ user:", user);
+    /* return await User.find().select("-password").sort({ nombre: 1 }); */
+    if (role === "ADMIN") {
+      const allUsers = await User.find({ role: { $ne: "ROOT" } }).select("-password").sort({ nombre: 1 });
+      console.log("🚀 ~ getUsersService ~ calcularEdad: 👤👤👤 allUsers");
+      return calcularEdad(allUsers);
+      /* console.log("🚀 ~ getUsersService ~ user:", user); */
+      /* return await User.find({ role: { $ne: "ROOT" } }).select("-password").sort({ nombre: 1 }); */
+    }
+    const thisUser = await User.find().select("-password").sort({ nombre: 1 });
+    console.log("🚀 ~ getUsersService ~ calcularEdad: 👤 thisUsers");
+    return calcularEdad(thisUser)
+    /* return await User.find().select("-password").sort({ nombre: 1 }); */
   } catch (error) {
+    console.error("❌ Error en getUsersService:", error)
     throw {
       statusCode: error.statusCode || 500,
       message: error.message || "Error interno del servidor",

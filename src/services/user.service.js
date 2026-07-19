@@ -12,6 +12,8 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
     const role = requesterRole?.toUpperCase();
     const currentUserId = requesterId?.toString();
 
+    console.log(`role: ${role} / currentUserId: ${currentUserId} in getUsersService`)
+
     if (!role) {
       throw {
         statusCode: 403,
@@ -99,19 +101,26 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
     }
 
     //Obtener todos los usuarios
-    /* return await User.find().select("-password").sort({ nombre: 1 }); */
+    if (role === "USER") {
+      const user = await User.findById(currentUserId).select("-password")
+      if (!user) {
+        throw {
+          statusCode: 400,
+          message: "Usuario no encontrado"
+        }
+      }
+      return calcularEdad(user)
+    }
     if (role === "ADMIN") {
-      const allUsers = await User.find({ role: { $ne: "ROOT" } })
-        .select("-password")
-        .sort({ nombre: 1 });
+      const allUsers = await User.find({ role: { $ne: "ROOT" } }).select("-password").sort({ nombre: 1 });
       console.log("🚀 ~ getUsersService ~ calcularEdad: 👤👤👤 allUsers");
       return calcularEdad(allUsers);
       /* console.log("🚀 ~ getUsersService ~ user:", user); */
       /* return await User.find({ role: { $ne: "ROOT" } }).select("-password").sort({ nombre: 1 }); */
     }
-    const thisUser = await User.find().select("-password").sort({ nombre: 1 });
-    console.log("🚀 ~ getUsersService ~ calcularEdad: 👤 thisUsers");
-    return calcularEdad(thisUser);
+    const allUsers = await User.find().select("-password").sort({ nombre: 1 });
+    console.log(`🚀 ~ getUsersService ~ calcularEdad: 👤 allUsers = ${allUsers}`);
+    return calcularEdad(allUsers);
     /* return await User.find().select("-password").sort({ nombre: 1 }); */
   } catch (error) {
     console.error("❌ Error en getUsersService:", error);

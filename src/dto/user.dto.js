@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 const roles = ["ROOT", "ADMIN", "USER", "GUEST"];
+const genero = ["Femenino", "Masculino", "Otro"];
 
 const createUserSchema = Joi.object({
   nombre: Joi.string().trim().min(2).max(100).required(),
@@ -18,7 +19,8 @@ const createUserSchema = Joi.object({
     "number.min": "La edad debe ser mayor a 0",
     "number.max": "La edad no puede ser mayor a 120",
   }),
-  genero: Joi.string().trim().required(),
+  genero: Joi.string().trim()
+    .valid(...genero).required().messages({ "any.only": `El género debe ser uno de los siguientes: ${genero.join(", ")}` }),
   telefono: Joi.string().trim().min(6).max(20).required(), //+59, al empezar con el signo más (+) deja de ser un número.
   direccion: Joi.string().trim().max(200).required(),
   localidad: Joi.string().trim().max(100).required(),
@@ -29,6 +31,7 @@ const createUserSchema = Joi.object({
     .valid(...roles) /* .default("USER") */
     .messages({ "any.only": `El rol debe ser uno de los siguientes: ${roles.join(", ")}` }),
   userName: Joi.string().trim().min(2).max(100),
+  avatarURL: Joi.string().trim()
 });
 
 const updateUserSchema = Joi.object({
@@ -58,6 +61,7 @@ const updateUserSchema = Joi.object({
     .valid(...roles)
     .messages({ "any.only": `El rol debe ser uno de los siguientes: ${roles.join(", ")}` }),
   userName: Joi.string().trim().min(2).max(100),
+  avatarURL: Joi.string().allow('').optional().trim()
 });
 
 const userParamsSchema = Joi.object({

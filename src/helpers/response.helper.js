@@ -2,6 +2,7 @@
 //Evita repetir res.status().json() en todos los controllers
 
 export const successResponse = (res, data = null, message = "Operacipon exitosa", statusCode = 200) => {
+  console.log(`successResponse`)
   return res.status(statusCode).json({
     success: true,
     statusCode,
@@ -11,6 +12,7 @@ export const successResponse = (res, data = null, message = "Operacipon exitosa"
 };
 
 export const errorResponse = (res, message = "Error interno del servidor", statusCode = 500, errors = null) => {
+  console.log(`errorResponse`)
   return res.status(statusCode).json({
     success: false,
     statusCode,
@@ -20,6 +22,7 @@ export const errorResponse = (res, message = "Error interno del servidor", statu
 };
 
 export const forbiddenResponse = (res, message = "Acceso denegado", errors = null) => {
+  console.log(`forbiddenResponse`)
   return res.status(403).json({
     //error conocido
     success: false,

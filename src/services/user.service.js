@@ -15,6 +15,7 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
     console.log(`role: ${role} / currentUserId: ${currentUserId} in getUsersService`)
 
     if (!role) {
+      console.log(`if(!role)`)
       throw {
         statusCode: 403,
         message: "No tienes permisos para ver usuarios",
@@ -22,6 +23,7 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
     }
 
     if (role === "GUEST") {
+      console.log(`if role === "GUEST"`)
       throw {
         statusCode: 403,
         message: "No tienes permisos para ver usuarios",
@@ -30,7 +32,7 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
 
     // buscar por ID
     if (id) {
-      console.log("Buscar por id");
+      console.log("if (id) -> Buscar por id");
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw {
           statusCode: 400,
@@ -46,7 +48,7 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
       }
 
       const user = await User.findById(id).select("-password"); //no tiene que devolver el password!
-      /* const users = await User.find().select('-password')*/ //no tiene que devolver el password!
+      console.log(`user: ${user}`)
       if (!user) {
         throw {
           statusCode: 404,
@@ -67,9 +69,11 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
 
       return user;
     }
+    console.log(`----`)
 
     //Buscar por email
     if (email) {
+      console.log(`if (email) -> Buscar por email`)
       const user = await User.findOne({ email }).select("-password");
 
       if (!user) {
@@ -99,29 +103,34 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
 
       return user;
     }
+    console.log(`----`)
 
     //Obtener todos los usuarios
+    console.log('Obtener todos los usuarios')
     if (role === "USER") {
+      console.log(`role === "USER"`)
       const user = await User.findById(currentUserId).select("-password")
       if (!user) {
+        console.log('if (!user) -> message: "Usuario no encontrado')
         throw {
           statusCode: 400,
           message: "Usuario no encontrado"
         }
       }
+      console.log(`user: ${user}`)
       return calcularEdad(user)
     }
     if (role === "ADMIN") {
+      console.log(`role === "ADMIN`)
       const allUsers = await User.find({ role: { $ne: "ROOT" } }).select("-password").sort({ nombre: 1 });
       console.log("🚀 ~ getUsersService ~ calcularEdad: 👤👤👤 allUsers");
       return calcularEdad(allUsers);
-      /* console.log("🚀 ~ getUsersService ~ user:", user); */
-      /* return await User.find({ role: { $ne: "ROOT" } }).select("-password").sort({ nombre: 1 }); */
     }
+
     const allUsers = await User.find().select("-password").sort({ nombre: 1 });
     console.log(`🚀 ~ getUsersService ~ calcularEdad: 👤 allUsers = ${allUsers}`);
     return calcularEdad(allUsers);
-    /* return await User.find().select("-password").sort({ nombre: 1 }); */
+
   } catch (error) {
     console.error("❌ Error en getUsersService:", error);
     throw {
@@ -130,9 +139,8 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
       errors: error.errors || null,
     };
   }
-  /* console.log("🚀 ~ getUsersService ~ calcularEdad:")
-console.log(usersWithAge) */
-  console.log("---");
+
+  console.log("--- end of getUsersService");
   /* return usersWithAge */
 };
 
@@ -152,6 +160,7 @@ const createUserService = async (data) => {
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
+    const normalizedRole = data.role?.toUpperCase() || "USER";
     //calcular edad:
 
     const user = new User({
@@ -168,7 +177,9 @@ const createUserService = async (data) => {
       provincia: data.provincia,
       pais: data.pais,
       codigoPostal: data.codigoPostal,
+      role: normalizedRole,
       userName: data.userName,
+      avatarURL: data.avatarURL,
     });
 
     await user.save();
@@ -187,7 +198,9 @@ const createUserService = async (data) => {
       provincia: user.provincia,
       pais: user.pais,
       codigoPostal: user.codigoPostal,
+      role: user.role,
       userName: user.userName,
+      avatarURL: data.avatarURL,
     }; // desgloso el objeto para asegurarme de que no se envía la contraseña
   } catch (error) {
     console.error("❌ Error en createUserService", error);
@@ -199,10 +212,12 @@ const createUserService = async (data) => {
   }
 };
 
-const updateUserService = async (id, data) => {
+const updateUserService = async (id, data, requester = {}) => {
   //Updates a user's information by their ID. @param {Object} data - The fields to update for the user.
   console.log("SERVICE → updateUserService");
   try {
+    const requesterRole = requester.requesterRole?.toUpperCase();
+    const requesterId = requester.requesterId?.toString();
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw {
         statusCode: 400,
@@ -226,6 +241,47 @@ const updateUserService = async (id, data) => {
         message: "El email no puede modificarse",
       };
     }
+
+    if (data.role !== undefined) {
+      if (!requesterRole || !["ROOT", "ADMIN"].includes(requesterRole)) {
+        throw {
+          statusCode: 403,
+          message: "No tienes permisos para modificar roles",
+        };
+      }
+
+      if (user._id.toString() === requesterId) {
+        throw {
+          statusCode: 403,
+          message: "No puedes modificar tu propio rol",
+        };
+      }
+
+      /*       if (user.role !== "USER" && user.role !== "GUEST") {
+              throw {
+                statusCode: 400,
+                message: "Solo puedes modificar el rol de usuarios con rol USER o GUEST",
+              };
+            } */
+
+      const requestedRole = data.role.toUpperCase();
+
+      if (requesterRole === "ADMIN" && !["USER", "GUEST"].includes(requestedRole)) {
+        throw {
+          statusCode: 403,
+          message: "Un administrador solo puede asignar los roles USER o GUEST",
+        };
+      }
+
+      if (requesterRole === "ROOT" && !["ROOT", "ADMIN", "USER", "GUEST"].includes(requestedRole)) {
+        throw {
+          statusCode: 400,
+          message: "Rol inválido",
+        };
+      }
+
+      user.role = requestedRole;
+    }
     // Si otro usuario ya tiene ese userName, informar que el nombre de usuario ya existe:
     /* if () {
             throw {
@@ -248,8 +304,8 @@ const updateUserService = async (id, data) => {
       "provincia",
       "pais",
       "codigoPostal",
-      /* "role", */
       "userName",
+      "avatarURL",
     ];
 
     allowedFields.forEach((field) => {
@@ -281,6 +337,7 @@ const updateUserService = async (id, data) => {
       codigoPostal: user.codigoPostal,
       role: user.role,
       userName: user.userName,
+      avatarURL: user.avatarURL,
     };
     /* const [updatedUserWithAge] = await calcularEdad([user])
         return updatedUserWithAge */ // @returns {Promise<Object>} The updated user object with calculated age.

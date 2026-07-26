@@ -67,10 +67,6 @@ Modo producción:
 npm start
 ```
 
-```bash
-npm start
-```
-
 La API quedará disponible en:
 
 ```text

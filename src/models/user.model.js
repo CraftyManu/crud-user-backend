@@ -31,6 +31,8 @@ const userSchema = new mongoose.Schema(
     genero: {
       type: String,
       required: true,
+      enum: ["Femenino", "Masculino", "Otro"],
+      default: "Otro",
     },
     telefono: {
       type: String,
@@ -61,14 +63,16 @@ const userSchema = new mongoose.Schema(
       enum: ["ROOT", "ADMIN", "USER", "GUEST"],
       default: "USER",
     },
+    userName: {
+      type: String,
+    },
     ultimoLogin: {
       type: Date,
       default: null,
     },
-    userName: {
+    avatarURL: {
       type: String,
-      /* required: true */
-    },
+    }
   },
   {
     timestamps: true, //hora utc0 (-3 para nuestro uso horario)

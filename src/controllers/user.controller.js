@@ -18,7 +18,8 @@ const getUsers = async (req, res) => {
       requesterId: req.user?.userId,
     });
     console.log(`getUsers in user.controller.js: Usuarios obtenidos correctamente`)
-    console.log(`users.nombre: ${users.nombre}`)
+/*     console.log(`users.nombre: ${users.nombre}`)
+    console.log(`requesterRole`, users.requesterRole) */
     return successResponse(res, users, "Usuarios obtenidos correctamente");
   } catch (error) {
     if (error.statusCode === 403) {

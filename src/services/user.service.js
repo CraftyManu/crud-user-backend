@@ -117,9 +117,10 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
           message: "Usuario no encontrado"
         }
       }
-      console.log(`user: ${user}`)
-      return [calcularEdad(user)]
+      const usersWithAge = calcularEdad([user]);
+      return usersWithAge; 
     }
+    
     if (role === "ADMIN") {
       console.log(`role === "ADMIN`)
       const allUsers = await User.find({ role: { $ne: "ROOT" } }).select("-password").sort({ nombre: 1 });
@@ -321,7 +322,7 @@ const updateUserService = async (id, data, requester = {}) => {
 
     await user.save();
 
-    return {
+    user = {
       id: user._id,
       nombre: user.nombre,
       apellido: user.apellido,
@@ -335,10 +336,12 @@ const updateUserService = async (id, data, requester = {}) => {
       provincia: user.provincia,
       pais: user.pais,
       codigoPostal: user.codigoPostal,
-      role: user.role,
+      role: requestedRole,
       userName: user.userName,
       avatarURL: user.avatarURL,
-    };
+    }
+
+    return user;
     /* const [updatedUserWithAge] = await calcularEdad([user])
         return updatedUserWithAge */ // @returns {Promise<Object>} The updated user object with calculated age.
   } catch (error) {

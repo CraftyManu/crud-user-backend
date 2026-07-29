@@ -10,7 +10,7 @@ const router = express.Router();
 /* router.get('/users', getUsers) */
 router.get("/users", authMiddleware, authorizeRoles("ROOT", "ADMIN", "USER"), getUsers);
 router.post("/users", authMiddleware, authorizeRoles("ROOT", "ADMIN"), createUser);
-router.put("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN"), updateUser); //agregar USER
+router.put("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN", "USER"), updateUser); //agregar USER
 router.delete("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN"), deleteUser);
 
 router.get("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN"), getUsers);

@@ -118,9 +118,9 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
         }
       }
       const usersWithAge = calcularEdad([user]);
-      return usersWithAge; 
+      return usersWithAge;
     }
-    
+
     if (role === "ADMIN") {
       console.log(`role === "ADMIN`)
       const allUsers = await User.find({ role: { $ne: "ROOT" } }).select("-password").sort({ nombre: 1 });
@@ -235,7 +235,7 @@ const updateUserService = async (id, data, requester = {}) => {
       };
     }
 
-    //El eamil existe pero no es modificable
+    //El email existe pero no es modificable
     if (data.email !== undefined) {
       throw {
         statusCode: 400,
@@ -264,7 +264,6 @@ const updateUserService = async (id, data, requester = {}) => {
                 message: "Solo puedes modificar el rol de usuarios con rol USER o GUEST",
               };
             } */
-
       const requestedRole = data.role.toUpperCase();
 
       if (requesterRole === "ADMIN" && !["USER", "GUEST"].includes(requestedRole)) {
@@ -281,7 +280,7 @@ const updateUserService = async (id, data, requester = {}) => {
         };
       }
 
-      user.role = requestedRole;
+
     }
     // Si otro usuario ya tiene ese userName, informar que el nombre de usuario ya existe:
     /* if () {
@@ -322,7 +321,7 @@ const updateUserService = async (id, data, requester = {}) => {
 
     await user.save();
 
-    user = {
+    const userWithAge = {
       id: user._id,
       nombre: user.nombre,
       apellido: user.apellido,
@@ -336,14 +335,32 @@ const updateUserService = async (id, data, requester = {}) => {
       provincia: user.provincia,
       pais: user.pais,
       codigoPostal: user.codigoPostal,
-      role: requestedRole,
+      role: user.role,
       userName: user.userName,
       avatarURL: user.avatarURL,
     }
 
-    return user;
-    /* const [updatedUserWithAge] = await calcularEdad([user])
-        return updatedUserWithAge */ // @returns {Promise<Object>} The updated user object with calculated age.
+  /*   user = {
+      id: user._id,
+      nombre: user.nombre,
+      apellido: user.apellido,
+      email: user.email,
+      fechaNacimiento: user.fechaNacimiento,
+      edad: user.edad,
+      genero: user.genero,
+      telefono: user.telefono,
+      direccion: user.direccion,
+      localidad: user.localidad,
+      provincia: user.provincia,
+      pais: user.pais,
+      codigoPostal: user.codigoPostal,
+      role: user.role,
+      userName: user.userName,
+      avatarURL: user.avatarURL,
+    } */
+
+    return userWithAge;
+
   } catch (error) {
     console.error("❌ Error en updateUserService:", error);
 

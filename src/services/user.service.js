@@ -118,7 +118,7 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
         }
       }
       console.log(`user: ${user}`)
-      return calcularEdad(user)
+      return [calcularEdad(user)]
     }
     if (role === "ADMIN") {
       console.log(`role === "ADMIN`)

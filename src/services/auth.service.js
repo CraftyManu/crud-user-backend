@@ -3,6 +3,13 @@ import jwt from "jsonwebtoken"; //genera token
 import User from "../models/user.model.js"; //para validar el mail
 import { env } from "../config/env.js"; //para que expire la sesión
 
+const normalizeRole = (role) => {
+  if (typeof role === "string" && role.trim()) {
+    return role.trim().toUpperCase();
+  }
+  return "USER";
+};
+
 const loginService = async (data) => {
   try {
     const user = await User.findOne({ email: data.email });
@@ -27,10 +34,12 @@ const loginService = async (data) => {
 
     await user.save();
 
+    const normalizedRole = normalizeRole(user.role);
+
     //Payload del token (cuerpo de la petición -> que datos pasamos para armar el token)
     const payload = {
       userId: user._id,
-      role: user.role,
+      role: normalizedRole,
     };
 
     //Generacipon del JWT
@@ -38,7 +47,7 @@ const loginService = async (data) => {
 
     return {
       token,
-      role: user.role, //para comprobar que los roles enviados sean los correctos -> cuando este checkeado que funciona eliminamos
+      role: normalizedRole, //para comprobar que los roles enviados sean los correctos -> cuando este checkeado que funciona eliminamos
     };
   } catch (error) {
     console.error("❌ Error en loginService:", error);

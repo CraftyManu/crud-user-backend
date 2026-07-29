@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import Audit from "../models/audit.model.js"; //models va a llamar a la database, por eso no necesito importarla en este archivo
 import mongoose from "mongoose"; //to validate id       /* import { checkUniqueUsername } from "../dto/user.dto.js" */ /* import calcularEdad from "../dao/functions/dao.users.js" */
-
 import calcularEdad from "../functions/edad/edad.users.js";
 
 const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
@@ -216,8 +215,14 @@ const createUserService = async (data) => {
 const updateUserService = async (id, data, requester = {}) => {
   //Updates a user's information by their ID. @param {Object} data - The fields to update for the user.
   console.log("SERVICE → updateUserService");
+  const normalizeRole = (role) => {
+    if (typeof role === "string" && role.trim()) {
+      return role.trim().toUpperCase();
+    }
+    return "USER";
+  };
   try {
-    const requesterRole = requester.requesterRole?.toUpperCase();
+    const requesterRole = normalizeRole(requester.requesterRole);
     const requesterId = requester.requesterId?.toString();
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw {
@@ -244,7 +249,10 @@ const updateUserService = async (id, data, requester = {}) => {
     }
 
     if (data.role !== undefined) {
+      console.log("🚀 ~ updateUserService ~ if (data.role !== undefined) :", (data.role !== undefined))
+
       if (!requesterRole || !["ROOT", "ADMIN"].includes(requesterRole)) {
+        console.log('if (!requesterRole || !["ROOT", "ADMIN"].includes(requesterRole))', (!requesterRole || !["ROOT", "ADMIN"].includes(requesterRole)))
         throw {
           statusCode: 403,
           message: "No tienes permisos para modificar roles",
@@ -264,7 +272,8 @@ const updateUserService = async (id, data, requester = {}) => {
                 message: "Solo puedes modificar el rol de usuarios con rol USER o GUEST",
               };
             } */
-      const requestedRole = data.role.toUpperCase();
+      const requestedRole = normalizeRole(data.role);
+      console.log('requestedRole: ', requestedRole)
 
       if (requesterRole === "ADMIN" && !["USER", "GUEST"].includes(requestedRole)) {
         throw {
@@ -279,18 +288,7 @@ const updateUserService = async (id, data, requester = {}) => {
           message: "Rol inválido",
         };
       }
-
-
     }
-    // Si otro usuario ya tiene ese userName, informar que el nombre de usuario ya existe:
-    /* if () {
-            throw {
-                statusCode: 400,
-                message: "El nombre de usuario ya existe"
-            };
-        } */
-
-    //calcular edad
 
     const allowedFields = [
       "nombre",
@@ -306,6 +304,7 @@ const updateUserService = async (id, data, requester = {}) => {
       "codigoPostal",
       "userName",
       "avatarURL",
+      "role",
     ];
 
     allowedFields.forEach((field) => {
@@ -318,7 +317,6 @@ const updateUserService = async (id, data, requester = {}) => {
     if (data.password !== undefined) {
       user.password = await bcrypt.hash(data.password, 10);
     }
-
     await user.save();
 
     const userWithAge = {
@@ -339,25 +337,6 @@ const updateUserService = async (id, data, requester = {}) => {
       userName: user.userName,
       avatarURL: user.avatarURL,
     }
-
-  /*   user = {
-      id: user._id,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      email: user.email,
-      fechaNacimiento: user.fechaNacimiento,
-      edad: user.edad,
-      genero: user.genero,
-      telefono: user.telefono,
-      direccion: user.direccion,
-      localidad: user.localidad,
-      provincia: user.provincia,
-      pais: user.pais,
-      codigoPostal: user.codigoPostal,
-      role: user.role,
-      userName: user.userName,
-      avatarURL: user.avatarURL,
-    } */
 
     return userWithAge;
 

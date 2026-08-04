@@ -188,7 +188,7 @@ Authorization: Bearer <your_jwt_token>
 #### Parámetros de consulta opcionales
 
 - `id`: filtra por ID de usuario
-- `email`: filtra por email
+<!-- - `email`: filtra por email
 
 #### Ejemplos con curl
 
@@ -203,7 +203,7 @@ curl "http://localhost:7000/users?email=usuario@example.com"
 ```bash
 curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
 ```
-
+ -->
 ---
 
 ### 3. Crear usuario
@@ -223,7 +223,7 @@ curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
   "fechaNacimiento": "1991-07-14",
   "genero": "Femenino",
   "telefono": "1122334455",
-  "direccion": "Av. Siempre Viva 123",
+  "direccion": "Calle 12",
   "localidad": "Santa Fe",
   "provincia": "Santa Fe",
   "pais": "Argentina",
@@ -247,7 +247,7 @@ curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
 - `pais`
 - `codigoPostal`
 
-#### Ejemplo con curl
+<!-- #### Ejemplo con curl
 
 ```bash
 curl -X POST http://localhost:7000/users \
@@ -267,7 +267,7 @@ curl -X POST http://localhost:7000/users \
     "codigoPostal": "5000",
     "role": "USER"
   }'
-```
+``` -->
 
 ---
 

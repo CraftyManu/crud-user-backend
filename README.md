@@ -213,9 +213,9 @@ curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
 
 ### 3. Crear usuario
 
-| Método | Endpoint | Descripción | Requiere token |
-| ------ | -------- | ----------- | -------------- |
-| POST | `/users` | Crea un nuevo usuario | Sí (solo ROOT o ADMIN) |
+| Método | Endpoint | Descripción | Requiere token | Usuarios autorizados |
+| ------ | -------- | ----------- | -------------- | -------------------- |
+| POST | `/users` | Crea un nuevo usuario | Sí | ROOT / ADMIN |
 
 #### Cuerpo
 
@@ -229,7 +229,7 @@ curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
   "genero": "Femenino",
   "telefono": "1122334455",
   "direccion": "Calle 12",
-  "localidad": "Santa Fe",
+  "localidad": "Avellaneda",
   "provincia": "Santa Fe",
   "pais": "Argentina",
   "codigoPostal": "5000",
@@ -278,9 +278,9 @@ curl -X POST http://localhost:7000/users \
 
 ### 4. Actualizar usuario
 
-| Método | Endpoint | Descripción | Requiere token |
-| ------ | -------- | ----------- | -------------- |
-| PUT | `/users/:id` | Actualiza los datos del usuario solicitado | Sí (solo ROOT, ADMIN o USER) |
+| Método | Endpoint | Descripción | Requiere token |Usuarios autorizados |
+| ------ | -------- | ----------- | -------------- |-------------------- |
+| PUT | `/users/:id` | Actualiza los datos del usuario solicitado | Sí | ROOT / ADMIN / USER |
 
 #### Cuerpo
 
@@ -319,9 +319,9 @@ curl -X PUT http://localhost:7000/users/6a52573bbf379ab68dad7dd3 \
 
 ### 5. Eliminar usuario
 
-| Método | Endpoint | Descripción | Requiere token |
-| ------ | -------- | ----------- | -------------- |
-| DELETE | `/users/:id` | Elimina el usuario indicado | Sí (solo ROOT o ADMIN)|
+| Método | Endpoint | Descripción | Requiere token | Usuarios autorizados |
+| ------ | -------- | ----------- | -------------- | -------------------- |
+| DELETE | `/users/:id` | Elimina el usuario indicado | Sí |  ROOT / ADMIN |
 
 #### Ejemplo con curl
 

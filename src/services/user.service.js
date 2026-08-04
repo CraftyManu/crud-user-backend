@@ -21,13 +21,13 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
       };
     }
 
-    if (role === "GUEST") {
+/*     if (role === "GUEST") {
       console.log(`if role === "GUEST"`)
       throw {
         statusCode: 403,
         message: "No tienes permisos para ver usuarios",
       };
-    }
+    } */
 
     // buscar por ID
     if (id) {
@@ -106,8 +106,9 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
 
     //Obtener todos los usuarios
     console.log('Obtener todos los usuarios')
-    if (role === "USER") {
-      console.log(`role === "USER"`)
+
+    if (role === "USER" || role === "GUEST") {
+      console.log(`role === ${role}`)
       const user = await User.findById(currentUserId).select("-password")
       if (!user) {
         console.log('if (!user) -> message: "Usuario no encontrado')

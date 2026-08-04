@@ -8,7 +8,7 @@ const router = express.Router();
 //exponemos las rutas y las ejecutamos
 
 /* router.get('/users', getUsers) */
-router.get("/users", authMiddleware, authorizeRoles("ROOT", "ADMIN", "USER"), getUsers);
+router.get("/users", authMiddleware, authorizeRoles("ROOT", "ADMIN", "USER", "GUEST"), getUsers);
 router.post("/users", authMiddleware, authorizeRoles("ROOT", "ADMIN"), createUser);
 router.put("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN", "USER"), updateUser); //agregar USER
 router.delete("/users/:id", authMiddleware, authorizeRoles("ROOT", "ADMIN"), deleteUser);

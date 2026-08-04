@@ -188,6 +188,11 @@ Authorization: Bearer <your_jwt_token>
 #### Parámetros de consulta opcionales
 
 - `id`: filtra por ID de usuario
+
+Ejemplo: 
+```bash
+http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3
+```
 <!-- - `email`: filtra por email
 
 #### Ejemplos con curl

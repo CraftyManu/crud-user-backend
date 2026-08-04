@@ -1,15 +1,18 @@
 # CRUD User Backend
 
-Backend para gestionar usuarios con autenticación JWT, roles y conexión a MongoDB. El proyecto permite crear, listar, actualizar y eliminar usuarios, además de realizar login para obtener un token de acceso.
+API REST para la gestión de usuarios con autenticación mediante JWT, autorización por roles, validaciones de entrada y protección contra accesos abusivos. El proyecto permite crear, consultar, actualizar y eliminar usuarios, así como iniciar sesión para obtener un token de acceso.
 
-## Features
+## Características principales
 
-- User CRUD operations
-- JWT authentication
-- Password hashing with `bcryptjs`
-- Validation with `Joi`
-- Role-based access control (`ROOT`, `ADMIN`, `USER`, `GUEST`)
-- MongoDB connection with Mongoose
+- CRUD de usuarios
+- Autenticación y autorización con JWT
+- Hashing seguro de contraseñas con `bcryptjs`
+- Validaciones de entrada con `Joi`
+- Control de acceso por roles (`ROOT`, `ADMIN`, `USER`, `GUEST`)
+- Rate limiting y protección contra ataques de fuerza bruta
+- Registro de auditoría y seguridad para operaciones sensibles
+- Cálculo de edad a partir de la fecha de nacimiento
+- Conexión a MongoDB con Mongoose
 
 ## Requisitos
 
@@ -27,10 +30,11 @@ Backend para gestionar usuarios con autenticación JWT, roles y conexión a Mong
 - Joi para validaciones
 - bcryptjs
 - CORS
+- express-rate-limit y rate-limiter-flexible
 
 ## Instalación
 
-1. Clonar el repositorio
+1. Clonar el repositorio:
 
    ```bash
    git clone https://github.com/CraftyManu/crud-user-backend.git
@@ -39,9 +43,9 @@ Backend para gestionar usuarios con autenticación JWT, roles y conexión a Mong
 
 2. Instalar dependencias:
 
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 3. Crear un archivo `.env` en la raíz del proyecto con las siguientes variables:
 
@@ -51,17 +55,22 @@ npm install
    JWT_SECRET=your_jwt_secret
    JWT_EXPIRES_IN=1h
    FRONTEND_URLS=http://localhost:5173
+   RATE_LIMIT_WINDOW_MINUTES=15
+   RATE_LIMIT_MAX_REQUESTS=100
+   LOGIN_WINDOW_MINUTES=15
+   LOGIN_MAX_ATTEMPTS=5
+   LOGIN_BLOCK_MINUTES=30
    ```
 
-## Ejecutar el proyecto
+## Ejecución del proyecto
 
-Modo desarrollo:
+### Modo desarrollo
 
 ```bash
 npm run dev
 ```
 
-Modo producción:
+### Modo producción
 
 ```bash
 npm start
@@ -77,33 +86,70 @@ http://localhost:7000
 
 ```text
 src/
-├── config/         # Environment, database, and CORS configuration
-├── controllers/    # Request handlers (controladores de la API)
-├── dto/            # validaciones con Joi
-├── functions/      # Helper functions
-├── helpers/        # Response utilities
-├── middlewares/    # Autenticación y autorización según roles
-├── models/         # Mongoose schemas
-├── routes/         # definición de rutas
-├── services/       # lógica de negocio
-└── app.js          # inicialización del servidor
+├── config/         # Configuración de entorno, base de datos y CORS
+├── controllers/    # Handlers de las rutas de la API
+├── dto/            # Validaciones con Joi
+├── functions/      # Funciones auxiliares
+├── helpers/        # Utilidades para respuestas estandarizadas
+├── middlewares/    # Autenticación, roles, rate limit y brute force
+├── models/         # Modelos de Mongoose
+├── routes/         # Definición de rutas
+├── services/       # Lógica de negocio
+└── app.js          # Inicialización del servidor
 ```
 
-## API Endpoints
+### Estructura del proyecto detallada
 
-### 1) Login (Authentication)
+```text
+src/
+├── app.js                          # Inicializa Express, middlewares, conexión a MongoDB y rutas
+├── config/
+│   ├── cors.js                    # Configuración de CORS para los orígenes permitidos
+│   ├── db.js                      # Conexión a MongoDB mediante Mongoose
+│   └── env.js                     # Carga y acceso a variables de entorno
+├── controllers/
+│   ├── auth.controller.js         # Maneja el login y las respuestas HTTP
+│   └── user.controller.js         # Maneja CRUD de usuarios y validaciones de entrada
+├── dto/
+│   └── user.dto.js                # Esquemas Joi para crear y actualizar usuarios
+├── functions/
+│   └── edad/
+│       └── edad.users.js          # Cálculo de edad a partir de la fecha de nacimiento
+├── helpers/
+│   └── response.helper.js         # Respuestas uniformes para éxito/error
+├── middlewares/
+│   ├── auth.middleware.js         # Verifica JWT y adjunta datos del usuario autenticado
+│   ├── bruteForce.middleware.js   # Protege el login ante múltiples intentos fallidos
+│   ├── rateLimit.middleware.js    # Limita la cantidad de peticiones por IP
+│   └── role.middleware.js         # Verifica permisos por roles
+├── models/
+│   ├── audit.model.js             # Registro de auditoría para operaciones sensibles
+│   ├── securityLog.model.js       # Logs de seguridad para eventos como rate limit y brute force
+│   └── user.model.js              # Esquema principal del usuario
+├── routes/
+│   ├── auth.routes.js             # Ruta de autenticación (/auth/login)
+│   └── user.routes.js             # Rutas de usuarios (/users)
+├── services/
+│   ├── auth.service.js            # Lógica de autenticación y generación de tokens
+│   └── user.service.js            # Lógica de negocio para CRUD y permisos
+└── scripts/                       # Scripts auxiliares del proyecto
+```
 
-| Method | Endpoint      | Description                          | Requiere Token |
-| ------ | ------------- | ------------------------------------ | -------------- |
-| POST   | `/auth/login` | Login a user and receive a JWT token | No             |
+## Endpoints de la API
 
-#### Headers
+### 1. Autenticación (Login)
+
+| Método | Endpoint | Descripción | Requiere token |
+| ------ | -------- | ----------- | -------------- |
+| POST | `/auth/login` | Inicia sesión y devuelve un JWT | No |
+
+#### Encabezados
 
 ```http
 Content-Type: application/json
 ```
 
-#### Body
+#### Cuerpo
 
 ```json
 {
@@ -125,9 +171,7 @@ Content-Type: application/json
 }
 ```
 
-El login devuelve un token JWT. Para los endpoints protegidos, debes enviar este header:
-
-#### Auth Header Example
+Para consumir los endpoints protegidos, debe enviarse el siguiente encabezado:
 
 ```http
 Authorization: Bearer <your_jwt_token>
@@ -135,40 +179,26 @@ Authorization: Bearer <your_jwt_token>
 
 ---
 
-### 2) Listar usuarios
+### 2. Listar usuarios
 
-- Método: GET
-- Ruta: /users
-- Requiere token: No (actualmente)
+| Método | Endpoint | Descripción | Requiere token |
+| ------ | -------- | ----------- | -------------- |
+| GET | `/users` | Devuelve la lista de usuarios según el rol del solicitante | Sí |
 
-| Method | Endpoint | Description                             | Requiere Token |
-| ------ | -------- | --------------------------------------- | -------------- |
-| GET    | `/users` | Devuelve la lista de todos los usuarios | Si             |
+#### Parámetros de consulta opcionales
 
-#### Headers
+- `id`: filtra por ID de usuario
+- `email`: filtra por email
 
-```http
-Content-Type: application/json
-```
-
-#### Query params (opcionales)
-
-- id: filtra por ID de usuario
-- email: filtra por email
-
-#### Ejemplo con curl
+#### Ejemplos con curl
 
 ```bash
 curl http://localhost:7000/users
 ```
 
-Filtrar por email:
-
 ```bash
 curl "http://localhost:7000/users?email=usuario@example.com"
 ```
-
-Filtrar por id:
 
 ```bash
 curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
@@ -176,19 +206,13 @@ curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
 
 ---
 
-### 3) Crear usuario
+### 3. Crear usuario
 
-| Method | Endpoint | Description           | Requiere Token   |
-| ------ | -------- | --------------------- | ---------------- |
-| POST   | `/users` | Crea un nuevo usuario | No (actualmente) |
+| Método | Endpoint | Descripción | Requiere token |
+| ------ | -------- | ----------- | -------------- |
+| POST | `/users` | Crea un nuevo usuario | Sí (solo ROOT o ADMIN) |
 
-#### Headers
-
-```http
-Content-Type: application/json
-```
-
-#### Body
+#### Cuerpo
 
 ```json
 {
@@ -210,18 +234,18 @@ Content-Type: application/json
 
 #### Campos obligatorios
 
-- nombre
-- apellido
-- email
-- password
-- fechaNacimiento
-- genero
-- telefono
-- direccion
-- localidad
-- provincia
-- pais
-- codigoPostal
+- `nombre`
+- `apellido`
+- `email`
+- `password`
+- `fechaNacimiento`
+- `genero`
+- `telefono`
+- `direccion`
+- `localidad`
+- `provincia`
+- `pais`
+- `codigoPostal`
 
 #### Ejemplo con curl
 
@@ -229,48 +253,39 @@ Content-Type: application/json
 curl -X POST http://localhost:7000/users \
   -H "Content-Type: application/json" \
   -d '{
-"nombre": "Manuela",
-  "apellido": "Sartor",
-  "email": "manu@ejemplo.com",
-  "password": "123456",
-  "fechaNacimiento": "1991-07-14",
-  "genero": "Femenino",
-  "telefono": "1122334455",
-  "direccion": "Av. Siempre Viva 123",
-  "localidad": "Santa Fe",
-  "provincia": "Santa Fe",
-  "pais": "Argentina",
-  "codigoPostal": "5000",
-  "role": "USER"
+    "nombre": "Manuela",
+    "apellido": "Sartor",
+    "email": "manu@ejemplo.com",
+    "password": "123456",
+    "fechaNacimiento": "1991-07-14",
+    "genero": "Femenino",
+    "telefono": "1122334455",
+    "direccion": "Av. Siempre Viva 123",
+    "localidad": "Santa Fe",
+    "provincia": "Santa Fe",
+    "pais": "Argentina",
+    "codigoPostal": "5000",
+    "role": "USER"
   }'
 ```
 
 ---
 
-### 4) Actualizar usuario
+### 4. Actualizar usuario
 
-- Roles permitidos: ROOT, ADMIN
+| Método | Endpoint | Descripción | Requiere token |
+| ------ | -------- | ----------- | -------------- |
+| PUT | `/users/:id` | Actualiza los datos del usuario solicitado | Sí (solo ROOT, ADMIN o USER) |
 
-| Method | Endpoint     | Description                               | Requiere Token |
-| ------ | ------------ | ----------------------------------------- | -------------- |
-| PUT    | `/users/:id` | Devuelve los datos del usuario solicitado | Si             |
+#### Cuerpo
 
-#### Headers
-
-```http
-Content-Type: application/json
-Authorization: Bearer <token>
-```
-
-#### Body
-
-Puedes enviar uno o varios de estos campos:
+Puede enviarse uno o varios de los siguientes campos:
 
 ```json
 {
   "nombre": "Manuela Actualizado",
   "apellido": "Sartor",
-  "fechaNaciemiento": "1992-07-24",
+  "fechaNacimiento": "1992-07-24",
   "telefono": "1199887766",
   "direccion": "Nueva dirección 456",
   "password": "nuevaPassword123"
@@ -279,9 +294,9 @@ Puedes enviar uno o varios de estos campos:
 
 #### Consideraciones
 
-- El campo email no se puede modificar.
+- El campo `email` no puede modificarse.
 - Debe enviarse al menos un campo para actualizar.
-- El id debe ser un ObjectId válido de MongoDB.
+- El `id` debe ser un ObjectId válido de MongoDB.
 
 #### Ejemplo con curl
 
@@ -291,29 +306,17 @@ curl -X PUT http://localhost:7000/users/6a52573bbf379ab68dad7dd3 \
   -H "Authorization: Bearer <token>" \
   -d '{
     "nombre": "Manuela Actualizado",
-      "direccion": "Nueva dirección 456"
+    "direccion": "Nueva dirección 456"
   }'
 ```
 
 ---
 
-### 5) Eliminar usuario
+### 5. Eliminar usuario
 
-- Roles permitidos: ROOT, ADMIN
-
-| Method | Endpoint     | Description        | Requiere Token |
-| ------ | ------------ | ------------------ | -------------- |
-| DELETE | `/users/:id` | Elimina el usuario | Si             |
-
-#### Headers
-
-```http
-Authorization: Bearer <token>
-```
-
-#### Body
-
-No requiere body.
+| Método | Endpoint | Descripción | Requiere token |
+| ------ | -------- | ----------- | -------------- |
+| DELETE | `/users/:id` | Elimina el usuario indicado | Sí (solo ROOT o ADMIN)|
 
 #### Ejemplo con curl
 
@@ -324,9 +327,9 @@ curl -X DELETE http://localhost:7000/users/6a52573bbf379ab68dad7dd3 \
 
 ---
 
-## User Fields
+## Modelo de usuario
 
-The user model includes the following fields:
+El modelo de usuario incluye los siguientes campos:
 
 - `nombre`
 - `apellido`
@@ -343,51 +346,37 @@ The user model includes the following fields:
 - `role`
 - `userName`
 - `ultimoLogin`
-
-### Users
-
-Además, para los endpoints de actualización y eliminación, el usuario debe tener rol `ROOT` o `ADMIN`.
-
-All user routes require a valid Bearer token and the role must be `ROOT` or `ADMIN`.
-
-| Method | Endpoint        | Description            |
-| ------ | --------------- | ---------------------- |
-| GET    | `/users`        | Get all users          |
-| GET    | `/users/:id`    | Get a user by ID       |
-| GET    | `/users/:email` | Get a user by ID       |
-| POST   | `/users`        | Create a new user      |
-| PUT    | `/users/:id`    | Update a user by ID    |
-| PUT    | `/users/:email` | Update a user by email |
-| DELETE | `/users/:id`    | Delete a user by ID    |
+- `avatarURL`
 
 ## Roles disponibles
 
-- ROOT
-- ADMIN
-- USER
-- GUEST
+- `ROOT`
+- `ADMIN`
+- `USER`
+- `GUEST`
 
 ## Códigos de respuesta comunes
 
-- 200: operación exitosa
-- 201: usuario creado correctamente
-- 400: error de validación o datos inválidos
-- 401: token faltante o inválido
-- 403: acceso denegado por rol
-- 404: recurso no encontrado
-- 409: usuario ya existe
+- `200`: operación exitosa
+- `201`: usuario creado correctamente
+- `400`: error de validación o datos inválidos
+- `401`: token faltante o inválido
+- `403`: acceso denegado por rol
+- `404`: recurso no encontrado
+- `409`: usuario ya existe
+- `429`: demasiadas solicitudes o intentos fallidos
 
 ## Recomendación para probar en Postman o Thunder Client
 
-1. Ejecutar POST /auth/login con un usuario existente.
+1. Ejecutar `POST /auth/login` con un usuario existente.
 2. Copiar el token recibido.
-3. En los endpoints protegidos, agregar el header Authorization con el valor Bearer <token>.
-4. Para probar PUT y DELETE, usar un usuario con rol ROOT o ADMIN.
+3. En los endpoints protegidos, agregar el encabezado `Authorization: Bearer <token>`.
+4. Para probar `PUT` y `DELETE`, utilizar un usuario con rol `ROOT` o `ADMIN`.
 
-#### Notas
+## Notas
 
-- The backend expects the MongoDB connection string to be provided through `MONGO_URI`.
-- `JWT_SECRET` and `JWT_EXPIRES_IN` are required for authentication to work.
-- `FRONTEND_URLS` is used by the CORS configuration.
-- The `email` field is unique for each user.
-- `password` is stored securely as a hashed value.
+- El backend espera que la cadena de conexión de MongoDB se proporcione a través de `MONGO_URI`.
+- `JWT_SECRET` y `JWT_EXPIRES_IN` son obligatorios para que la autenticación funcione correctamente.
+- `FRONTEND_URLS` se utiliza en la configuración de CORS.
+- El campo `email` es único por usuario.
+- La contraseña se almacena de forma segura como valor hash.

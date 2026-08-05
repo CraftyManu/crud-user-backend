@@ -92,7 +92,10 @@ const deleteUser = async (req, res) => {
       return errorResponse(res, "Id inválido", 400, paramsError.details);
     }
 
-    const result = await deleteUserService(req.params.id);
+    const result = await deleteUserService(req.params.id, {
+      requesterRole: req.user?.role,
+      requesterId: req.user?.userId,
+    });
 
     return successResponse(res, result, "Usuario eliminado correctamente");
   } catch (error) {

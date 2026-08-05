@@ -365,12 +365,22 @@ const updateUserService = async (id, data, requester = {}) => {
   }
 };
 
-const deleteUserService = async (id) => {
+const deleteUserService = async (id, requester = {}) => {
   console.log("SERVICE → deleteUserService");
+
+  const normalizeRole = (role) => {
+    if (typeof role === "string" && role.trim()) {
+      return role.trim().toUpperCase();
+    }
+    return "";
+  };
 
   let session;
 
   try {
+    const requesterRole = normalizeRole(requester.requesterRole);
+    const requesterId = requester.requesterId?.toString();
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw {
         statusCode: 400,
@@ -387,6 +397,14 @@ const deleteUserService = async (id) => {
         throw {
           statusCode: 404,
           message: "Usuario no encontrado",
+        };
+      }
+
+      if (requesterRole === "ADMIN" && ["ADMIN", "ROOT"].includes(user.role)) {
+        console.log('No tienes permisos para eliminar a este usuario.')
+        throw {
+          statusCode: 403,
+          message: "No tienes permisos para eliminar a este usuario.",
         };
       }
 

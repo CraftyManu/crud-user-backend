@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import Audit from "../models/audit.model.js"; //models va a llamar a la database, por eso no necesito importarla en este archivo
 import mongoose from "mongoose"; //to validate id       /* import { checkUniqueUsername } from "../dto/user.dto.js" */ /* import calcularEdad from "../dao/functions/dao.users.js" */
 import calcularEdad from "../functions/edad/edad.users.js";
+import sendWelcomeEmail from "./email.service.js"
 
 const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
   console.log("SERVICE → getUsersService");
@@ -21,13 +22,13 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
       };
     }
 
-/*     if (role === "GUEST") {
-      console.log(`if role === "GUEST"`)
-      throw {
-        statusCode: 403,
-        message: "No tienes permisos para ver usuarios",
-      };
-    } */
+    /*     if (role === "GUEST") {
+          console.log(`if role === "GUEST"`)
+          throw {
+            statusCode: 403,
+            message: "No tienes permisos para ver usuarios",
+          };
+        } */
 
     // buscar por ID
     if (id) {
@@ -185,6 +186,15 @@ const createUserService = async (data) => {
 
     await user.save();
 
+    // RESEND (envía email de confirmacion cuando se crea una nueva cuenta)
+    try {
+      console.log('sending email')
+      await sendWelcomeEmail(user);
+    } catch (error) {
+      console.log('there was an error sending the email', error)
+      console.error(error);
+    }
+
     return {
       id: user._id,
       nombre: user.nombre,
@@ -318,7 +328,10 @@ const updateUserService = async (id, data, requester = {}) => {
     if (data.password !== undefined) {
       user.password = await bcrypt.hash(data.password, 10);
     }
+    /* console.log('before await user.save() in updateUserService') */
     await user.save();
+    /* console.log('after await user.save() in updateUserService') */
+
 
     const userWithAge = {
       id: user._id,

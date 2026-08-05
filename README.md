@@ -11,6 +11,7 @@ API REST para la gestión de usuarios con autenticación mediante JWT, autorizac
 - Control de acceso por roles (`ROOT`, `ADMIN`, `USER`, `GUEST`)
 - Rate limiting y protección contra ataques de fuerza bruta
 - Registro de auditoría y seguridad para operaciones sensibles
+- Envío de email de bienvenida al crear usuarios con Resend
 - Cálculo de edad a partir de la fecha de nacimiento
 - Conexión a MongoDB con Mongoose
 
@@ -54,6 +55,7 @@ API REST para la gestión de usuarios con autenticación mediante JWT, autorizac
    MONGO_URI=your_mongodb_connection_string
    JWT_SECRET=your_jwt_secret
    JWT_EXPIRES_IN=1h
+   RESEND_API_KEY=your_resend_api_key
    FRONTEND_URLS=http://localhost:5173
    RATE_LIMIT_WINDOW_MINUTES=15
    RATE_LIMIT_MAX_REQUESTS=100
@@ -131,6 +133,7 @@ src/
 │   └── user.routes.js             # Rutas de usuarios (/users)
 ├── services/
 │   ├── auth.service.js            # Lógica de autenticación y generación de tokens
+│   ├── email.service.js           # Envío de emails de bienvenida usando Resend
 │   └── user.service.js            # Lógica de negocio para CRUD y permisos
 └── scripts/                       # Scripts auxiliares del proyecto
 ```
@@ -252,28 +255,6 @@ curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
 - `pais`
 - `codigoPostal`
 
-<!-- #### Ejemplo con curl
-
-```bash
-curl -X POST http://localhost:7000/users \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nombre": "Manuela",
-    "apellido": "Sartor",
-    "email": "manu@ejemplo.com",
-    "password": "123456",
-    "fechaNacimiento": "1991-07-14",
-    "genero": "Femenino",
-    "telefono": "1122334455",
-    "direccion": "Av. Siempre Viva 123",
-    "localidad": "Santa Fe",
-    "provincia": "Santa Fe",
-    "pais": "Argentina",
-    "codigoPostal": "5000",
-    "role": "USER"
-  }'
-``` -->
-
 ---
 
 ### 4. Actualizar usuario
@@ -303,32 +284,11 @@ Puede enviarse uno o varios de los siguientes campos:
 - Debe enviarse al menos un campo para actualizar.
 - El `id` debe ser un ObjectId válido de MongoDB.
 
-#### Ejemplo con curl
-
-```bash
-curl -X PUT http://localhost:7000/users/6a52573bbf379ab68dad7dd3 \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
-  -d '{
-    "nombre": "Manuela Actualizado",
-    "direccion": "Nueva dirección 456"
-  }'
-```
-
----
-
 ### 5. Eliminar usuario
 
 | Método | Endpoint | Descripción | Requiere token | Usuarios autorizados |
 | ------ | -------- | ----------- | -------------- | -------------------- |
 | DELETE | `/users/:id` | Elimina el usuario indicado | Sí |  ROOT / ADMIN |
-
-#### Ejemplo con curl
-
-```bash
-curl -X DELETE http://localhost:7000/users/6a52573bbf379ab68dad7dd3 \
-  -H "Authorization: Bearer <token>"
-```
 
 ---
 

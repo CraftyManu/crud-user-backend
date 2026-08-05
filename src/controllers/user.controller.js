@@ -60,6 +60,12 @@ const updateUser = async (req, res) => {
     console.log('req.body')
     console.log(req.body)
 
+    // Remove immutable or database-generated fields sent by clients (like _id)
+    // so Joi validation doesn't fail with "_id is not allowed".
+    if (req.body && Object.prototype.hasOwnProperty.call(req.body, '_id')) {
+      delete req.body._id;
+    }
+
     const { error } = updateUserSchema.validate(req.body);
 
     if (error) {
@@ -73,6 +79,7 @@ const updateUser = async (req, res) => {
 
     return successResponse(res, user, "Usuario actualizado correctamente");
   } catch (error) {
+    console.log('error in updateUser from user.controller.js: ', error)
     return errorResponse(res, error.message || "Error interno del servidor", error.statusCode || 500, error.errors || null);
   }
 };

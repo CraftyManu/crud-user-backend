@@ -33,7 +33,7 @@ const bruteForceMiddleware = async (req, res, next) => {
         remainingTime,
       },
     }),
-      errorResponse(res, `Demasiados intentos. Intente nuefvamente en ${remainingTime} segundos.`, 429, null));
+      errorResponse(res, `Demasiados intentos. Intente nuevamente en ${remainingTime} segundos.`, 429, null));
   }
 };
 

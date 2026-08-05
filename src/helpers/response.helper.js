@@ -12,7 +12,7 @@ export const successResponse = (res, data = null, message = "Operacipon exitosa"
 };
 
 export const errorResponse = (res, message = "Error interno del servidor", statusCode = 500, errors = null) => {
-  console.log(`errorResponse`)
+  console.log(`errorResponse`, statusCode, message, errors)
   return res.status(statusCode).json({
     success: false,
     statusCode,

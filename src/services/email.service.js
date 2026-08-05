@@ -6,19 +6,6 @@ const resend = new Resend(env.RESEND_API_KEY);
 export default async function sendWelcomeEmail(user) {
     console.log('function sendWelcomeEmail')
     console.log('user.email: ', user.email)
-    /* return await resend.emails.send({
-        /* from: "Acme <onboarding@resend.dev>", 
-        from: "Manu Sartor <onboarding@resend.dev>",
-        to: user.email,
-        subject: "Bienvenido!",
-        html: `
-            <h1>Hola ${user.nombre}!</h1>
-
-            <p>Tu cuenta se ha creado con éxito.</p>
-
-            <p>Ya puedes logearte.</p>
-        `
-    }); */
 
     const greeting =
         user.genero === "Femenino"
@@ -26,7 +13,7 @@ export default async function sendWelcomeEmail(user) {
             : "¡Bienvenido!";
 
     await resend.emails.send({
-        from: "Manu Sartor <onboarding@resend.dev>",
+        from: "UsersApp <onboarding@resend.dev>",
         to: user.email,
         subject: greeting,
         html: `

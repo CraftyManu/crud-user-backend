@@ -72,7 +72,7 @@ const userSchema = new mongoose.Schema(
     },
     avatarURL: {
       type: String,
-    }
+    },
   },
   {
     timestamps: true, //hora utc0 (-3 para nuestro uso horario)

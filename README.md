@@ -142,9 +142,9 @@ src/
 
 ### 1. Autenticación (Login)
 
-| Método | Endpoint | Descripción | Requiere token |
-| ------ | -------- | ----------- | -------------- |
-| POST | `/auth/login` | Inicia sesión y devuelve un JWT | No |
+| Método | Endpoint      | Descripción                     | Requiere token |
+| ------ | ------------- | ------------------------------- | -------------- |
+| POST   | `/auth/login` | Inicia sesión y devuelve un JWT | No             |
 
 #### Encabezados
 
@@ -184,18 +184,20 @@ Authorization: Bearer <your_jwt_token>
 
 ### 2. Listar usuarios
 
-| Método | Endpoint | Descripción | Requiere token |
-| ------ | -------- | ----------- | -------------- |
-| GET | `/users` | Devuelve la lista de usuarios según el rol del solicitante | Sí |
+| Método | Endpoint | Descripción                                                | Requiere token |
+| ------ | -------- | ---------------------------------------------------------- | -------------- |
+| GET    | `/users` | Devuelve la lista de usuarios según el rol del solicitante | Sí             |
 
 #### Parámetros de consulta opcionales
 
 - `id`: filtra por ID de usuario
 
-Ejemplo: 
+Ejemplo:
+
 ```bash
 http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3
 ```
+
 <!-- - `email`: filtra por email
 
 #### Ejemplos con curl
@@ -212,13 +214,14 @@ curl "http://localhost:7000/users?email=usuario@example.com"
 curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
 ```
  -->
+
 ---
 
 ### 3. Crear usuario
 
-| Método | Endpoint | Descripción | Requiere token | Usuarios autorizados |
-| ------ | -------- | ----------- | -------------- | -------------------- |
-| POST | `/users` | Crea un nuevo usuario | Sí | ROOT / ADMIN |
+| Método | Endpoint | Descripción           | Requiere token | Usuarios autorizados |
+| ------ | -------- | --------------------- | -------------- | -------------------- |
+| POST   | `/users` | Crea un nuevo usuario | Sí             | ROOT / ADMIN         |
 
 #### Cuerpo
 
@@ -259,9 +262,9 @@ curl "http://localhost:7000/users?id=6a52573bbf379ab68dad7dd3"
 
 ### 4. Actualizar usuario
 
-| Método | Endpoint | Descripción | Requiere token |Usuarios autorizados |
-| ------ | -------- | ----------- | -------------- |-------------------- |
-| PUT | `/users/:id` | Actualiza los datos del usuario solicitado | Sí | ROOT / ADMIN / USER |
+| Método | Endpoint     | Descripción                                | Requiere token | Usuarios autorizados |
+| ------ | ------------ | ------------------------------------------ | -------------- | -------------------- |
+| PUT    | `/users/:id` | Actualiza los datos del usuario solicitado | Sí             | ROOT / ADMIN / USER  |
 
 #### Cuerpo
 
@@ -286,9 +289,9 @@ Puede enviarse uno o varios de los siguientes campos:
 
 ### 5. Eliminar usuario
 
-| Método | Endpoint | Descripción | Requiere token | Usuarios autorizados |
-| ------ | -------- | ----------- | -------------- | -------------------- |
-| DELETE | `/users/:id` | Elimina el usuario indicado | Sí |  ROOT / ADMIN |
+| Método | Endpoint     | Descripción                 | Requiere token | Usuarios autorizados |
+| ------ | ------------ | --------------------------- | -------------- | -------------------- |
+| DELETE | `/users/:id` | Elimina el usuario indicado | Sí             | ROOT / ADMIN         |
 
 ---
 

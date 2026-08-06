@@ -6,7 +6,7 @@ const getUsers = async (req, res) => {
   console.log("🎮 CONTROLLER → getUsers");
   try {
     /* const { email, id } = req.query; */
-    // 
+    //
     const { email } = req.query;
     const id = req.params?.id || req.query?.id;
     //
@@ -17,16 +17,16 @@ const getUsers = async (req, res) => {
       requesterRole: req.user?.role, //operador ternario, si no lee el dato lo convierte en undefined? en vez de null
       requesterId: req.user?.userId,
     });
-    console.log(`getUsers in user.controller.js: Usuarios obtenidos correctamente`)
-/*     console.log(`users.nombre: ${users.nombre}`)
-    console.log(`requesterRole`, users.requesterRole) */
+    /*     console.log(`getUsers in user.controller.js: Usuarios obtenidos correctamente`)
+        console.log(`users.nombre: ${users.nombre}`)
+        console.log(`requesterRole`, users.requesterRole) */
     return successResponse(res, users, "Usuarios obtenidos correctamente");
   } catch (error) {
     if (error.statusCode === 403) {
       return forbiddenResponse(res, error.message || "Acceso denegado", error.errors || null);
     }
-    console.log('Error in user.controller.js getUsers', error)
-    return errorResponse(res, error.message || "Error interno del servidor", error.statusCode || 500, error.errors || null);
+    /*     console.log('Error in user.controller.js getUsers', error)
+     */ return errorResponse(res, error.message || "Error interno del servidor", error.statusCode || 500, error.errors || null);
   }
 };
 
@@ -35,12 +35,12 @@ const createUser = async (req, res) => {
     console.log("🎮 CONTROLLER → createUser");
     //Validar DTO
     const { error, value } = createUserSchema.validate(req.body); //compara con el archivo dto, es un proceso rápido
-    console.log('req.body:')
-    console.log(req.body)
+    /* console.log('req.body:')
+    console.log(req.body) */
 
     if (error) {
-      console.log("Hay un error en la data enviada a createUserSchema");
-      return errorResponse(res, "Error de validación - hay un error en la data enviada", 400, error.details);
+      /*       console.log("Hay un error en la data enviada a createUserSchema");
+       */ return errorResponse(res, "Error de validación - hay un error en la data enviada", 400, error.details);
     }
     const user = await createUserService(value); //es un proceso más lento, tiene que verificar contra el modelo, tiene que sacar la contraseña y encriptarla, guarda nuevo objeto con contraseña encriptada, puede verificar si el mail ya existe y luego guarda en la database...
     return successResponse(res, user, "Usuario creado correctamente", 201);
@@ -57,12 +57,12 @@ const updateUser = async (req, res) => {
       return errorResponse(res, "Id inválido", 400, paramsError.details);
     }
 
-    console.log('req.body')
-    console.log(req.body)
+    /*  console.log('req.body')
+    console.log(req.body) */
 
     // Remove immutable or database-generated fields sent by clients (like _id)
     // so Joi validation doesn't fail with "_id is not allowed".
-    if (req.body && Object.prototype.hasOwnProperty.call(req.body, '_id')) {
+    if (req.body && Object.prototype.hasOwnProperty.call(req.body, "_id")) {
       delete req.body._id;
     }
 
@@ -79,8 +79,8 @@ const updateUser = async (req, res) => {
 
     return successResponse(res, user, "Usuario actualizado correctamente");
   } catch (error) {
-    console.log('error in updateUser from user.controller.js: ', error)
-    return errorResponse(res, error.message || "Error interno del servidor", error.statusCode || 500, error.errors || null);
+    /*     console.log('error in updateUser from user.controller.js: ', error)
+     */ return errorResponse(res, error.message || "Error interno del servidor", error.statusCode || 500, error.errors || null);
   }
 };
 

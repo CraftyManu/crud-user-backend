@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import Audit from "../models/audit.model.js"; //models va a llamar a la database, por eso no necesito importarla en este archivo
 import mongoose from "mongoose"; //to validate id       /* import { checkUniqueUsername } from "../dto/user.dto.js" */ /* import calcularEdad from "../dao/functions/dao.users.js" */
 import calcularEdad from "../functions/edad/edad.users.js";
-import sendWelcomeEmail from "./email.service.js"
+import sendWelcomeEmail from "./email.service.js";
 
 const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
   console.log("SERVICE → getUsersService");
@@ -12,10 +12,9 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
     const role = requesterRole?.toUpperCase();
     const currentUserId = requesterId?.toString();
 
-    console.log(`role: ${role} / currentUserId: ${currentUserId} in getUsersService`)
-
+    /*     console.log(`role: ${role} / currentUserId: ${currentUserId} in getUsersService`)
+     */
     if (!role) {
-      console.log(`if(!role)`)
       throw {
         statusCode: 403,
         message: "No tienes permisos para ver usuarios",
@@ -32,7 +31,7 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
 
     // buscar por ID
     if (id) {
-      console.log("if (id) -> Buscar por id");
+      /*  console.log("if (id) -> Buscar por id"); */
       if (!mongoose.Types.ObjectId.isValid(id)) {
         throw {
           statusCode: 400,
@@ -48,7 +47,7 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
       }
 
       const user = await User.findById(id).select("-password"); //no tiene que devolver el password!
-      console.log(`user: ${user}`)
+      /* console.log(`user: ${user}`) */
       if (!user) {
         throw {
           statusCode: 404,
@@ -63,17 +62,17 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
         };
       }
 
-      console.log("🚀 ~ getUsersService ~ calcularEdad:");
+      /* console.log("🚀 ~ getUsersService ~ calcularEdad:"); */
       calcularEdad(user);
-      console.log("🚀 ~ getUsersService ~ user:", user);
+      /*  console.log("🚀 ~ getUsersService ~ user:", user); */
 
       return user;
     }
-    console.log(`----`)
+    /* console.log(`----`) */
 
     //Buscar por email
     if (email) {
-      console.log(`if (email) -> Buscar por email`)
+      /* console.log(`if (email) -> Buscar por email`) */
       const user = await User.findOne({ email }).select("-password");
 
       if (!user) {
@@ -97,44 +96,45 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
         };
       }
 
-      console.log("🚀 ~ getUsersService ~ calcularEdad:");
-      calcularEdad(user);
-      console.log("🚀 ~ getUsersService ~ user:", user);
+      /*       console.log("🚀 ~ getUsersService ~ calcularEdad:");
+       */ calcularEdad(user);
+      /*  console.log("🚀 ~ getUsersService ~ user:", user); */
 
       return user;
     }
-    console.log(`----`)
+    console.log(`----`);
 
     //Obtener todos los usuarios
-    console.log('Obtener todos los usuarios')
+    /* console.log('Obtener todos los usuarios') */
 
     if (role === "USER" || role === "GUEST") {
-      console.log(`role === ${role}`)
-      const user = await User.findById(currentUserId).select("-password")
+      /* console.log(`role === ${role}`) */
+      const user = await User.findById(currentUserId).select("-password");
       if (!user) {
-        console.log('if (!user) -> message: "Usuario no encontrado')
+        /* console.log('if (!user) -> message: "Usuario no encontrado') */
         throw {
           statusCode: 400,
-          message: "Usuario no encontrado"
-        }
+          message: "Usuario no encontrado",
+        };
       }
       const usersWithAge = calcularEdad([user]);
       return usersWithAge;
     }
 
     if (role === "ADMIN") {
-      console.log(`role === "ADMIN`)
-      const allUsers = await User.find({ role: { $ne: "ROOT" } }).select("-password").sort({ nombre: 1 });
-      console.log("🚀 ~ getUsersService ~ calcularEdad: 👤👤👤 allUsers");
-      return calcularEdad(allUsers);
+      /* console.log(`role === "ADMIN`) */
+      const allUsers = await User.find({ role: { $ne: "ROOT" } })
+        .select("-password")
+        .sort({ nombre: 1 });
+      /*       console.log("🚀 ~ getUsersService ~ calcularEdad: 👤👤👤 allUsers");
+       */ return calcularEdad(allUsers);
     }
 
     const allUsers = await User.find().select("-password").sort({ nombre: 1 });
-    console.log(`🚀 ~ getUsersService ~ calcularEdad: 👤 allUsers = ${allUsers}`);
-    return calcularEdad(allUsers);
-
+    /*     console.log(`🚀 ~ getUsersService ~ calcularEdad: 👤 allUsers = ${allUsers}`);
+     */ return calcularEdad(allUsers);
   } catch (error) {
-    console.error("❌ Error en getUsersService:", error);
+    /* console.error("❌ Error en getUsersService:", error); */
     throw {
       statusCode: error.statusCode || 500,
       message: error.message || "Error interno del servidor",
@@ -142,7 +142,7 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
     };
   }
 
-  console.log("--- end of getUsersService");
+  /* console.log("--- end of getUsersService"); */
   /* return usersWithAge */
 };
 
@@ -188,10 +188,10 @@ const createUserService = async (data) => {
 
     // RESEND (envía email de confirmacion cuando se crea una nueva cuenta)
     try {
-      console.log('sending email')
+      console.log("Enviando email de bienvenida");
       await sendWelcomeEmail(user);
     } catch (error) {
-      console.log('there was an error sending the email', error)
+      /* console.log('there was an error sending the email', error) */
       console.error(error);
     }
 
@@ -260,10 +260,10 @@ const updateUserService = async (id, data, requester = {}) => {
     }
 
     if (data.role !== undefined) {
-      console.log("🚀 ~ updateUserService ~ if (data.role !== undefined) :", (data.role !== undefined))
+      console.log("🚀 ~ updateUserService ~ if (data.role !== undefined) :", data.role !== undefined);
 
       if (!requesterRole || !["ROOT", "ADMIN"].includes(requesterRole)) {
-        console.log('if (!requesterRole || !["ROOT", "ADMIN"].includes(requesterRole))', (!requesterRole || !["ROOT", "ADMIN"].includes(requesterRole)))
+        console.log('if (!requesterRole || !["ROOT", "ADMIN"].includes(requesterRole))', !requesterRole || !["ROOT", "ADMIN"].includes(requesterRole));
         throw {
           statusCode: 403,
           message: "No tienes permisos para modificar roles",
@@ -284,7 +284,7 @@ const updateUserService = async (id, data, requester = {}) => {
               };
             } */
       const requestedRole = normalizeRole(data.role);
-      console.log('requestedRole: ', requestedRole)
+      console.log("requestedRole: ", requestedRole);
 
       if (requesterRole === "ADMIN" && !["USER", "GUEST"].includes(requestedRole)) {
         throw {
@@ -301,22 +301,7 @@ const updateUserService = async (id, data, requester = {}) => {
       }
     }
 
-    const allowedFields = [
-      "nombre",
-      "apellido",
-      "fechaNacimiento",
-      "edad",
-      "genero",
-      "telefono",
-      "direccion",
-      "localidad",
-      "provincia",
-      "pais",
-      "codigoPostal",
-      "userName",
-      "avatarURL",
-      "role",
-    ];
+    const allowedFields = ["nombre", "apellido", "fechaNacimiento", "edad", "genero", "telefono", "direccion", "localidad", "provincia", "pais", "codigoPostal", "userName", "avatarURL", "role"];
 
     allowedFields.forEach((field) => {
       if (data[field] !== undefined) {
@@ -331,7 +316,6 @@ const updateUserService = async (id, data, requester = {}) => {
     /* console.log('before await user.save() in updateUserService') */
     await user.save();
     /* console.log('after await user.save() in updateUserService') */
-
 
     const userWithAge = {
       id: user._id,
@@ -350,10 +334,9 @@ const updateUserService = async (id, data, requester = {}) => {
       role: user.role,
       userName: user.userName,
       avatarURL: user.avatarURL,
-    }
+    };
 
     return userWithAge;
-
   } catch (error) {
     console.error("❌ Error en updateUserService:", error);
 
@@ -401,8 +384,8 @@ const deleteUserService = async (id, requester = {}) => {
       }
 
       if (requesterRole === "ADMIN" && ["ADMIN", "ROOT"].includes(user.role)) {
-        console.log('No tienes permisos para eliminar a este usuario.')
-        throw {
+        /*         console.log('No tienes permisos para eliminar a este usuario.')
+         */ throw {
           statusCode: 403,
           message: "No tienes permisos para eliminar a este usuario.",
         };
@@ -417,6 +400,8 @@ const deleteUserService = async (id, requester = {}) => {
         ],
         { session },
       );
+
+      /* console.log('Usuario eliminado: ', user) */
 
       await user.deleteOne({ session }); //Eliminar usuario y cerrar session
     });

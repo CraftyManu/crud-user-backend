@@ -18,6 +18,7 @@ const rateLimiter = rateLimit({
   },
   handler: async (req, res) => {
     const ip = req.ip || req.socket.remoteAddress || "unknown";
+    console.log(`Demasiados solicitudes. ip: ${ip} / email: ${req.body?.email || " "}`)
     await SecurityLog.create({
       eventType: "rate_limit",
       ip,

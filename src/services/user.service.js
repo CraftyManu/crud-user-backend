@@ -102,7 +102,7 @@ const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
 
       return user;
     }
-    console.log(`----`);
+    /*     console.log(`----`); */
 
     //Obtener todos los usuarios
     /* console.log('Obtener todos los usuarios') */
@@ -191,7 +191,7 @@ const createUserService = async (data) => {
       console.log("Enviando email de bienvenida");
       await sendWelcomeEmail(user);
     } catch (error) {
-      /* console.log('there was an error sending the email', error) */
+      console.log('there was an error sending the email', error)
       console.error(error);
     }
 

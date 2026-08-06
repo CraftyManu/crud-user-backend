@@ -4,16 +4,17 @@ import { env } from "../config/env.js";
 const resend = new Resend(env.RESEND_API_KEY);
 
 export default async function sendWelcomeEmail(user) {
-  console.log("function sendWelcomeEmail");
-  console.log("user.email: ", user.email);
+    console.log(`----`);
+    console.log(`Enviando email de Bienvenida a: ${user.email}`);
+    console.log(`----`);
 
-  const greeting = user.genero === "Femenino" ? "¡Bienvenida!" : "¡Bienvenido!";
+    const greeting = user.genero === "Femenino" ? "¡Bienvenida!" : "¡Bienvenido!";
 
-  await resend.emails.send({
-    from: "UsersApp <onboarding@resend.dev>",
-    to: user.email,
-    subject: greeting,
-    html: `
+    await resend.emails.send({
+        from: "UsersApp <onboarding@resend.dev>",
+        to: user.email,
+        subject: greeting,
+        html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -93,5 +94,5 @@ export default async function sendWelcomeEmail(user) {
 </body>
 </html>
 `,
-  });
+    });
 }

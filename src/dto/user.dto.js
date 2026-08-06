@@ -4,10 +4,26 @@ const roles = ["ROOT", "ADMIN", "USER", "GUEST"];
 const genero = ["Femenino", "Masculino", "Otro"];
 
 const createUserSchema = Joi.object({
-  nombre: Joi.string().trim().min(2).max(100).required(),
-  apellido: Joi.string().trim().min(2).max(100).required(),
-  email: Joi.string().trim().email().required(),
-  password: Joi.string().min(6).max(50).required(),
+  nombre: Joi.string().trim().min(2).max(100).required().messages({
+    'string.base': 'El nombre debe ser texto válido.',
+    'string.empty': 'El nombre no puede estar vacio.',
+    'string.min': 'El nombre debe contener al menos 2 caracteres.',
+    'any.required': 'Debes ingresar tu nombre.'
+  }),
+  apellido: Joi.string().trim().min(2).max(100).required().messages({
+    'string.base': 'El apellido debe ser texto válido.',
+    'string.empty': 'El apellido no puede estar vacio.',
+    'string.min': 'El apellido debe contener al menos 2 caracteres.',
+    'any.required': 'Debes ingresar tu apellido.'
+  }),
+  email: Joi.string().trim().email().required().messages({
+    'string.email': 'Por favor ingresa una dirección de email válida.',
+    'any.required': 'Debes ingresar un email.'
+  }),
+  password: Joi.string().min(6).max(50).required().messages({
+    'any.required': 'Debes ingresar una congraseña',
+    'string.min': 'La contraseña debe contener al menos 6 caracteres.'
+  }),
   fechaNacimiento: Joi.date().iso("Date must be in YYYY-MM-DD format").required().messages({
     "date.base": "La fecha de nacimiento ingresada debe ser una fecha válida",
     "date.format": "La fecha de nacimiento debe estar en formato AAAA-MM-DD",
@@ -38,8 +54,18 @@ const createUserSchema = Joi.object({
 });
 
 const updateUserSchema = Joi.object({
-  nombre: Joi.string().trim().min(2).max(100),
-  apellido: Joi.string().trim().min(2).max(100),
+  nombre: Joi.string().trim().min(2).max(100).messages({
+    'string.base': 'El nombre debe ser texto válido.',
+    'string.empty': 'El nombre no puede estar vacio.',
+    'string.min': 'El nombre debe contener al menos 2 caracteres.',
+    'any.required': 'El nombre es un campo requerido.'
+  }),
+  apellido: Joi.string().trim().min(2).max(100).messages({
+    'string.base': 'El apellido debe ser texto válido.',
+    'string.empty': 'El apellido no puede estar vacio.',
+    'string.min': 'El apellido debe contener al menos 2 caracteres.',
+    'any.required': 'El apellido es un campo requerido.'
+  }),
   //Se permite recibirlo para devolver un mensaje amigable desde el service indicando que no puede modificarse
   email: Joi.string().trim().email(),
   password: Joi.string().min(6).max(50),

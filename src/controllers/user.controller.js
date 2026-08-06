@@ -2,6 +2,10 @@ import { createUserSchema, updateUserSchema, userParamsSchema } from "../dto/use
 import { getUsersService, createUserService, updateUserService, deleteUserService } from "../services/user.service.js";
 import { successResponse, errorResponse, forbiddenResponse } from "../helpers/response.helper.js";
 
+const getValidationMessage = (error, fallbackMessage) => {
+  return error?.details?.[0]?.message || fallbackMessage;
+};
+
 const getUsers = async (req, res) => {
   console.log("🎮 CONTROLLER → getUsers");
   try {
@@ -39,8 +43,8 @@ const createUser = async (req, res) => {
     console.log(req.body) */
 
     if (error) {
-      /*       console.log("Hay un error en la data enviada a createUserSchema");
-       */ return errorResponse(res, "Error de validación - hay un error en la data enviada", 400, error.details);
+      const validationMessage = getValidationMessage(error, "Error de validación - hay un error en la data enviada");
+      return errorResponse(res, validationMessage, 400, error.details);
     }
     const user = await createUserService(value); //es un proceso más lento, tiene que verificar contra el modelo, tiene que sacar la contraseña y encriptarla, guarda nuevo objeto con contraseña encriptada, puede verificar si el mail ya existe y luego guarda en la database...
     return successResponse(res, user, "Usuario creado correctamente", 201);
@@ -54,7 +58,8 @@ const updateUser = async (req, res) => {
     const { error: paramsError } = userParamsSchema.validate(req.params);
 
     if (paramsError) {
-      return errorResponse(res, "Id inválido", 400, paramsError.details);
+      const validationMessage = getValidationMessage(paramsError, "Id inválido");
+      return errorResponse(res, validationMessage, 400, paramsError.details);
     }
 
     /*  console.log('req.body')
@@ -69,7 +74,8 @@ const updateUser = async (req, res) => {
     const { error } = updateUserSchema.validate(req.body);
 
     if (error) {
-      return errorResponse(res, "Error de validación", 400, error.details);
+      const validationMessage = getValidationMessage(error, "Error de validación");
+      return errorResponse(res, validationMessage, 400, error.details);
     }
 
     const user = await updateUserService(req.params.id, req.body, {
@@ -89,7 +95,8 @@ const deleteUser = async (req, res) => {
     const { error: paramsError } = userParamsSchema.validate(req.params);
 
     if (paramsError) {
-      return errorResponse(res, "Id inválido", 400, paramsError.details);
+      const validationMessage = getValidationMessage(paramsError, "Id inválido");
+      return errorResponse(res, validationMessage, 400, paramsError.details);
     }
 
     const result = await deleteUserService(req.params.id, {

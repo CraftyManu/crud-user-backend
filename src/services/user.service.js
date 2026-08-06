@@ -163,7 +163,7 @@ const createUserService = async (data) => {
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const normalizedRole = data.role?.toUpperCase() || "USER";
-    //calcular edad:
+
 
     const user = new User({
       nombre: data.nombre,
@@ -183,6 +183,8 @@ const createUserService = async (data) => {
       userName: data.userName,
       avatarURL: data.avatarURL,
     });
+    //calcular edad:
+    calcularEdad(user)
 
     await user.save();
 
@@ -313,11 +315,13 @@ const updateUserService = async (id, data, requester = {}) => {
     if (data.password !== undefined) {
       user.password = await bcrypt.hash(data.password, 10);
     }
+
+    calcularEdad(user)
     /* console.log('before await user.save() in updateUserService') */
     await user.save();
     /* console.log('after await user.save() in updateUserService') */
 
-    const userWithAge = {
+    /* const userWithAge = {
       id: user._id,
       nombre: user.nombre,
       apellido: user.apellido,
@@ -336,7 +340,8 @@ const updateUserService = async (id, data, requester = {}) => {
       avatarURL: user.avatarURL,
     };
 
-    return userWithAge;
+    return userWithAge; */
+    return user;
   } catch (error) {
     console.error("❌ Error en updateUserService:", error);
 

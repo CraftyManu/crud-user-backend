@@ -23,7 +23,15 @@ const ensureLogsDirectory = () => {
     }
 };
 
-const createTimestamp = () => new Date().toISOString();
+/* const createTimestamp = () => new Date().toISOString(); */
+const createTimestamp = () => {
+    return new Intl.DateTimeFormat('es-AR', {
+        timeZone: 'America/Argentina/Buenos_Aires',
+        dateStyle: 'short',
+        timeStyle: 'medium',
+        hour12: false
+    }).format(new Date());
+};
 
 const serialize = (value) => {
     if (value instanceof Error) {

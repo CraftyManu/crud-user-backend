@@ -21,8 +21,8 @@ const bruteForceMiddleware = async (req, res, next) => {
     next();
   } catch (rejRes) {
     const remainingTime = Math.round(rejRes.msBeforeNext / 1000);
-    console.log(`Demasiados intentos de login fallidos. ip: ${ip} / email: ${req.body?.email || " "}`)
-    (await SecurityLog.create({
+/*     console.log(`Demasiados intentos de login fallidos. ip: ${ip} / email: ${req.body?.email || " "}`)
+ */    (await SecurityLog.create({
       eventType: "brute_force",
       ip,
       method: req.method,
@@ -30,7 +30,7 @@ const bruteForceMiddleware = async (req, res, next) => {
       userAgent: req.get("user-agent") || "",
       userEmail: req.body?.email || "",
       details: {
-        reason: "Too many failed login attempts",
+        reason: "Demasiados intentos de LOGIN fallidos.",
         remainingTime,
       },
     }),

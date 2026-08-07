@@ -190,10 +190,10 @@ const createUserService = async (data) => {
 
     // RESEND (envía email de confirmacion cuando se crea una nueva cuenta)
     try {
-      console.log("Enviando email de bienvenida");
+/*       console.log("Enviando email de bienvenida"); */
       await sendWelcomeEmail(user);
     } catch (error) {
-      console.log('there was an error sending the email', error)
+/*       console.log('there was an error sending the email', error) */
       console.error(error);
     }
 
@@ -317,30 +317,7 @@ const updateUserService = async (id, data, requester = {}) => {
     }
 
     calcularEdad(user)
-    /* console.log('before await user.save() in updateUserService') */
     await user.save();
-    /* console.log('after await user.save() in updateUserService') */
-
-    /* const userWithAge = {
-      id: user._id,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      email: user.email,
-      fechaNacimiento: user.fechaNacimiento,
-      edad: user.edad,
-      genero: user.genero,
-      telefono: user.telefono,
-      direccion: user.direccion,
-      localidad: user.localidad,
-      provincia: user.provincia,
-      pais: user.pais,
-      codigoPostal: user.codigoPostal,
-      role: user.role,
-      userName: user.userName,
-      avatarURL: user.avatarURL,
-    };
-
-    return userWithAge; */
     return user;
   } catch (error) {
     console.error("❌ Error en updateUserService:", error);
@@ -409,6 +386,8 @@ const deleteUserService = async (id, requester = {}) => {
       /* console.log('Usuario eliminado: ', user) */
 
       await user.deleteOne({ session }); //Eliminar usuario y cerrar session
+
+      console.log(`Usuario eliminado: ${user.email} / rol: ${user.role}. Fecha de eliminación: ${new Date()} `)
     });
 
     return {

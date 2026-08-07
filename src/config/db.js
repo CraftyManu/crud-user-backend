@@ -1,15 +1,15 @@
 import mongoose from "mongoose"; //importa todo
 
 import { env } from "./env.js"; //importa solo la funcion dentro de { }
+import logger from "../helpers/logger.js";
 
 const connectDB = async () => {
   try {
-    console.log("🔄 Conectando MongoDB...");
+    logger.info("🔄 Conectando MongoDB...");
     await mongoose.connect(env.MONGO_URI); //levanta la variable desde env
-    console.log("✔ Mongo conectado");
+    logger.info("✔ Mongo conectado");
   } catch (error) {
-    console.error("❌ Error conectando MongoDB:");
-    console.log(error);
+    logger.error("❌ Error conectando MongoDB:", error);
   }
 };
 

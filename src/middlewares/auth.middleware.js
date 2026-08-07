@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 
 import { errorResponse } from "../helpers/response.helper.js";
 import { env } from "../config/env.js";
+import logger from "../helpers/logger.js";
 
 const authMiddleware = (req, res, next) => {
   try {
@@ -15,7 +16,15 @@ const authMiddleware = (req, res, next) => {
 
     const decoded = jwt.verify(token, env.JWT_SECRET); //process.env.JWT_SECRET
 
-    req.user = { userId: decoded.userId, role: decoded.role };
+    req.user = { userId: decoded.userId, role: decoded.role, email: decoded.email };
+    req.logContext = {
+      ...(req.logContext || {}),
+      userId: decoded.userId || null,
+      email: decoded.email || null,
+      role: decoded.role || null,
+    };
+    req.logger = logger.withContext(req.logContext);
+    req.logger.info("Usuario autenticado");
 
     next();
   } catch (error) {

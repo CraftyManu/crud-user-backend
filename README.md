@@ -115,12 +115,9 @@ src/
 ├── dto/
 │   └── user.dto.js                # Esquemas Joi para crear y actualizar usuarios
 ├── functions/
-│   └── edad/
-│       └── edad.users.js          # Cálculo de edad a partir de la fecha de nacimiento
-│   └── email/
-│       └──  email.service.js           # Envío de emails de bienvenida usando Resend
-├── helpers/
-│   └── response.helper.js         # Respuestas uniformes para éxito/error
+│   └── edad/ edad.users.js          # Cálculo de edad a partir de la fecha de nacimiento
+│   └── email/ email.service.js           # Envío de emails de bienvenida usando Resend
+├── helpers/ response.helper.js         # Respuestas uniformes para éxito/error 
 ├── middlewares/
 │   ├── auth.middleware.js         # Verifica JWT y adjunta datos del usuario autenticado
 │   ├── bruteForce.middleware.js   # Protege el login ante múltiples intentos fallidos

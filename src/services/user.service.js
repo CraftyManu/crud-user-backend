@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import Audit from "../models/audit.model.js"; //models va a llamar a la database, por eso no necesito importarla en este archivo
 import mongoose from "mongoose"; //to validate id       /* import { checkUniqueUsername } from "../dto/user.dto.js" */ /* import calcularEdad from "../dao/functions/dao.users.js" */
 import calcularEdad from "../functions/edad/edad.users.js";
-import sendWelcomeEmail from "./email.service.js";
+import sendWelcomeEmail from "../functions/email/email.users.js";
 
 const getUsersService = async ({ email, id, requesterRole, requesterId }) => {
   console.log("SERVICE → getUsersService");

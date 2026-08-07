@@ -6,11 +6,11 @@ API REST para la gestión de usuarios con autenticación mediante JWT, autorizac
 
 - CRUD de usuarios
 - Autenticación y autorización con JWT
-- Hashing seguro de contraseñas con `bcryptjs`
-- Validaciones de entrada con `Joi`
-- Control de acceso por roles (`ROOT`, `ADMIN`, `USER`, `GUEST`)
 - Rate limiting y protección contra ataques de fuerza bruta
 - Registro de auditoría y seguridad para operaciones sensibles
+- Control de acceso por roles (`ROOT`, `ADMIN`, `USER`, `GUEST`)
+- Hashing seguro de contraseñas con `bcryptjs`
+- Validaciones de entrada con `Joi`
 - Envío de email de bienvenida al crear usuarios con Resend
 - Cálculo de edad a partir de la fecha de nacimiento
 - Conexión a MongoDB con Mongoose
@@ -117,6 +117,8 @@ src/
 ├── functions/
 │   └── edad/
 │       └── edad.users.js          # Cálculo de edad a partir de la fecha de nacimiento
+│   └── email/
+│       └──  email.service.js           # Envío de emails de bienvenida usando Resend
 ├── helpers/
 │   └── response.helper.js         # Respuestas uniformes para éxito/error
 ├── middlewares/
@@ -133,7 +135,6 @@ src/
 │   └── user.routes.js             # Rutas de usuarios (/users)
 ├── services/
 │   ├── auth.service.js            # Lógica de autenticación y generación de tokens
-│   ├── email.service.js           # Envío de emails de bienvenida usando Resend
 │   └── user.service.js            # Lógica de negocio para CRUD y permisos
 └── scripts/                       # Scripts auxiliares del proyecto
 ```

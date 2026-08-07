@@ -21,19 +21,19 @@ const createUserSchema = Joi.object({
     'any.required': 'Debes ingresar un email.'
   }),
   password: Joi.string().min(6).max(50).required().messages({
-    'any.required': 'Debes ingresar una congraseña',
+    'any.required': 'Debes ingresar una contraseña.',
     'string.min': 'La contraseña debe contener al menos 6 caracteres.'
   }),
   fechaNacimiento: Joi.date().iso("Date must be in YYYY-MM-DD format").required().messages({
-    "date.base": "La fecha de nacimiento ingresada debe ser una fecha válida",
-    "date.format": "La fecha de nacimiento debe estar en formato AAAA-MM-DD",
+    "date.base": "La fecha de nacimiento ingresada debe ser una fecha válida.",
+    "date.format": "La fecha de nacimiento debe estar en formato AAAA-MM-DD.",
   }),
   edad: Joi.number().integer().min(1).max(120).messages({
     //not required -> la calculo en functions/dao
-    "number.base": "La edad debe ser numérica",
-    "number.integer": "La edad debe ser un número entero",
-    "number.min": "La edad debe ser mayor a 0",
-    "number.max": "La edad no puede ser mayor a 120",
+    "number.base": "La edad debe ser numérica.",
+    "number.integer": "La edad debe ser un número entero.",
+    "number.min": "La edad debe ser mayor a 0.",
+    "number.max": "La edad no puede ser mayor a 120.",
   }),
   genero: Joi.string()
     .trim()
@@ -70,34 +70,57 @@ const updateUserSchema = Joi.object({
   email: Joi.string().trim().email(),
   password: Joi.string().min(6).max(50),
   fechaNacimiento: Joi.date().iso("Date must be in YYYY-MM-DD format").messages({
-    "date.base": "La fecha de nacimiento ingresada debe ser una fecha válida",
-    "date.format": "La fecha de nacimiento debe estar en formato AAAA-MM-DD",
+    "date.base": "La fecha de nacimiento ingresada debe ser una fecha válida.",
+    "date.format": "La fecha de nacimiento debe estar en formato AAAA-MM-DD.",
   }),
   edad: Joi.number().integer().min(1).max(120).messages({
-    "number.base": "La edad debe ser numérica",
-    "number.integer": "La edad debe ser un número entero",
-    "number.min": "La edad debe ser mayor a 0",
-    "number.max": "La edad no puede ser mayor a 120",
+    "number.base": "La edad debe ser numérica.",
+    "number.integer": "La edad debe ser un número entero.",
+    "number.min": "La edad debe ser mayor a 0.",
+    "number.max": "La edad no puede ser mayor a 120.",
   }),
   genero: Joi.string().trim(),
-  telefono: Joi.string().trim().min(6).max(20), //+59, al empezar con el signo más deja de ser un número.
-  direccion: Joi.string().trim().max(200),
-  localidad: Joi.string().trim().max(100),
-  provincia: Joi.string().trim().max(100),
-  pais: Joi.string().trim().max(100),
-  codigoPostal: Joi.string().trim().max(20),
+  telefono: Joi.string().trim().min(6).max(20).messages({
+    'string.empty': 'Debes ingresar un telefono.',
+    'string.min': 'El teléfono debe contener al menos 6 caracteres.',
+    'string.max': 'El teléfono no puede tener más de 20 carácteres.'
+  }),//+59, al empezar con el signo más deja de ser un número.
+  direccion: Joi.string().trim().max(200).messages({
+    'string.empty': 'Debes ingresar una dirección.'
+    ,
+    'string.max': 'La dirección no puede tener más de 200 carácteres.'
+  }),
+  localidad: Joi.string().trim().max(100).messages({
+    'string.empty': 'Debes ingresar una localidad.'
+    ,
+    'string.max': 'La localidad no puede tener más de 100 carácteres.'
+  }),
+  provincia: Joi.string().trim().max(100).messages({
+    'string.empty': 'Debes ingresar una provincia.',
+    'string.max': 'La provincia no puede tener más de 100 carácteres.',
+  }),
+  pais: Joi.string().trim().max(100).messages({
+    'string.empty': 'Debes ingresar un país.'
+  }),
+  codigoPostal: Joi.string().trim().max(20).messages({
+    'string.empty': 'Debes ingresar un código postal.',
+    'string.max': 'El código postal no puede tener más de 20 carácteres.',
+  }),
   role: Joi.string()
     .valid(...roles)
     .messages({ "any.only": `El rol debe ser uno de los siguientes: ${roles.join(", ")}` }),
-  userName: Joi.string().trim().min(2).max(100),
+  userName: Joi.string().trim().min(2).max(100).messages({
+    'string.min': 'El nombre de usuario debe contener al menos 2 carácteres.',
+    'string.max': 'El nombre de usuario no puede tener más de 100 carácteres.',
+  }),
   avatarURL: Joi.string().allow("").optional().trim(),
 });
 
 const userParamsSchema = Joi.object({
   id: Joi.string().hex().length(24).required().messages({
-    "string.hex": "El id debe ser un ObjectId válido",
-    "string.length": "El id debe tener 24 caracteres",
-    "any.required": "El id es obligatorio",
+    "string.hex": "El id debe ser un ObjectId válido.",
+    "string.length": "El id debe tener 24 caracteres.",
+    "any.required": "El id es obligatorio.",
   }),
 });
 
